@@ -35,6 +35,28 @@ export interface TrafficSource {
   color: string;
 }
 
+export interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  segment: 'Enterprise' | 'Pro' | 'Starter';
+  ltv: number;
+  joinDate: string;
+  country: string;
+  orders: number;
+}
+
+export interface FunnelStep {
+  label: string;
+  value: number;
+  conversionRate: number;
+}
+
+export interface RetentionRow {
+  cohort: string;
+  weeks: number[];
+}
+
 export interface SummaryStats {
   revenue: { current: number; prev: number; change: number };
   orders: { current: number; prev: number; change: number };

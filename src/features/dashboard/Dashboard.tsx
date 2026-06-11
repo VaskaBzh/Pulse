@@ -68,12 +68,10 @@ export function Dashboard() {
 
   return (
     <div className="p-5 space-y-5 min-h-full">
-      {/* KPI grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
         {kpis.map((k) => <KPICard key={k.title} {...k} />)}
       </div>
 
-      {/* Revenue + Traffic */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
           <RevenueAreaChart />
@@ -81,7 +79,6 @@ export function Dashboard() {
         <TrafficDonutChart />
       </div>
 
-      {/* Orders + Products */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2">
           <OrdersBarChart />
@@ -89,7 +86,6 @@ export function Dashboard() {
         <TopProductsTable />
       </div>
 
-      {/* Orders table */}
       <RecentOrdersTable />
     </div>
   );

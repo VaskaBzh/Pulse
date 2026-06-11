@@ -1,5 +1,5 @@
 import { format, subDays } from 'date-fns';
-import type { DailyMetric, Order, Product, TrafficSource } from '../types';
+import type { DailyMetric, Order, Product, TrafficSource, Customer, FunnelStep, RetentionRow } from '../types';
 
 function sr(seed: number): number {
   const x = Math.sin(seed + 1) * 10000;
@@ -43,7 +43,7 @@ export const trafficSources: TrafficSource[] = [
 
 const COUNTRIES = ['USA', 'UK', 'Germany', 'France', 'Canada', 'Australia', 'Japan', 'Brazil'];
 const PRODUCTS = ['Pro Plan', 'Starter Kit', 'Analytics Suite', 'Designer Pack', 'Enterprise License', 'Growth Bundle'];
-const CUSTOMERS: [string, string][] = [
+const CUSTOMER_NAMES: [string, string][] = [
   ['Alex Johnson', 'alex@example.com'],
   ['Maria Garcia', 'maria@example.com'],
   ['James Wilson', 'james@example.com'],
@@ -60,7 +60,7 @@ const CUSTOMERS: [string, string][] = [
 
 export const recentOrders: Order[] = Array.from({ length: 28 }, (_, i) => {
   const s = (n: number) => sr(i * 17 + n);
-  const customer = CUSTOMERS[Math.floor(s(1) * CUSTOMERS.length)];
+  const customer = CUSTOMER_NAMES[Math.floor(s(1) * CUSTOMER_NAMES.length)];
   const daysAgo = Math.floor(s(2) * 14);
   const r = s(3) * 10;
   const status: Order['status'] = r < 6 ? 'completed' : r < 8 ? 'pending' : r < 9 ? 'cancelled' : 'refunded';
@@ -83,4 +83,45 @@ export const topProducts: Product[] = [
   { id: '4', name: 'Starter Kit', category: 'Subscription', revenue: 18920, orders: 421, growth: 11.7 },
   { id: '5', name: 'Enterprise License', category: 'License', revenue: 16500, orders: 22, growth: 34.6 },
   { id: '6', name: 'Growth Bundle', category: 'Bundle', revenue: 12180, orders: 94, growth: 8.3 },
+];
+
+const SEGMENTS: Customer['segment'][] = ['Enterprise', 'Pro', 'Pro', 'Starter', 'Starter', 'Starter'];
+
+export const customers: Customer[] = Array.from({ length: 20 }, (_, i) => {
+  const s = (n: number) => sr(i * 31 + n);
+  const [name, email] = CUSTOMER_NAMES[i % CUSTOMER_NAMES.length];
+  const segment = SEGMENTS[Math.floor(s(1) * SEGMENTS.length)];
+  const ltv = segment === 'Enterprise'
+    ? Math.round(2000 + s(2) * 8000)
+    : segment === 'Pro'
+      ? Math.round(500 + s(2) * 1500)
+      : Math.round(50 + s(2) * 450);
+  const orders = Math.round(1 + s(3) * (segment === 'Enterprise' ? 40 : segment === 'Pro' ? 15 : 8));
+  const daysAgo = Math.round(30 + s(4) * 300);
+  return {
+    id: `USR-${(1000 + i * 43).toString()}`,
+    name: i >= CUSTOMER_NAMES.length ? `${name} ${i}` : name,
+    email: i >= CUSTOMER_NAMES.length ? `user${i}@example.com` : email,
+    segment,
+    ltv,
+    joinDate: format(subDays(new Date(), daysAgo), 'yyyy-MM-dd'),
+    country: COUNTRIES[Math.floor(s(5) * COUNTRIES.length)],
+    orders,
+  };
+});
+
+export const funnelData: FunnelStep[] = [
+  { label: 'Visitors', value: 48200, conversionRate: 100 },
+  { label: 'Signups', value: 12840, conversionRate: 26.6 },
+  { label: 'Trials', value: 4310, conversionRate: 33.6 },
+  { label: 'Paid', value: 1480, conversionRate: 34.3 },
+];
+
+export const retentionData: RetentionRow[] = [
+  { cohort: 'Jan 2026', weeks: [100, 64, 50, 38, 30, 24] },
+  { cohort: 'Feb 2026', weeks: [100, 61, 47, 35, 27, 21] },
+  { cohort: 'Mar 2026', weeks: [100, 67, 53, 41, 32, 26] },
+  { cohort: 'Apr 2026', weeks: [100, 59, 44, 33, 25, 0] },
+  { cohort: 'May 2026', weeks: [100, 62, 48, 36, 0, 0] },
+  { cohort: 'Jun 2026', weeks: [100, 65, 51, 0, 0, 0] },
 ];

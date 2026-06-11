@@ -33,9 +33,6 @@ export function RecentOrdersTable() {
           <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Recent Orders</h3>
           <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Latest 10 transactions</p>
         </div>
-        <button className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors">
-          View all →
-        </button>
       </div>
 
       <div className="overflow-x-auto">

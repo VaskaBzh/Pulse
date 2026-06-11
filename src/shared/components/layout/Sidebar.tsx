@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard, TrendingUp, Package, Users, ShoppingBag,
+  LayoutDashboard, TrendingUp, Package, Users, ShoppingCart,
   FileText, Settings, ChevronLeft, ChevronRight, Zap,
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
@@ -9,7 +9,7 @@ import { clsx } from 'clsx';
 const NAV_ITEMS = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/analytics', label: 'Analytics', icon: TrendingUp },
-  { to: '/orders', label: 'Orders', icon: ShoppingBag },
+  { to: '/orders', label: 'Orders', icon: ShoppingCart },
   { to: '/customers', label: 'Customers', icon: Users },
   { to: '/products', label: 'Products', icon: Package },
   { to: '/reports', label: 'Reports', icon: FileText },
@@ -67,13 +67,13 @@ export function Sidebar() {
       <div className="px-2 pb-4 border-t border-slate-800/80 pt-4 space-y-0.5">
         <NavLink
           to="/settings"
-          className={({ isActive }) => clsx(
-            'flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150',
-            isActive
-              ? 'bg-indigo-600/15 text-indigo-400 border border-indigo-500/25'
-              : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent',
-          )}
           title={!sidebarOpen ? 'Settings' : undefined}
+          className={({ isActive }) => clsx(
+            'flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 border',
+            isActive
+              ? 'bg-indigo-600/15 text-indigo-400 border-indigo-500/25'
+              : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border-transparent',
+          )}
         >
           <Settings className="w-[18px] h-[18px] shrink-0" />
           {sidebarOpen && <span>Settings</span>}

@@ -20,7 +20,6 @@ export function TopBar() {
   const { theme, toggleTheme, dateRange, setDateRange, toggleSidebar } = useDashboardStore();
   const { exportToCSV } = useExport();
   const location = useLocation();
-
   const pageTitle = pathToTitle(location.pathname);
 
   return (
@@ -41,7 +40,6 @@ export function TopBar() {
       </div>
 
       <div className="flex items-center gap-2">
-        {/* Date range picker */}
         <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
           {RANGES.map(({ label, value }) => (
             <button
@@ -59,7 +57,6 @@ export function TopBar() {
           ))}
         </div>
 
-        {/* Export */}
         <button
           onClick={exportToCSV}
           className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 rounded-lg transition-colors shadow-sm shadow-indigo-600/25"
@@ -68,13 +65,11 @@ export function TopBar() {
           <span className="hidden sm:inline">Export CSV</span>
         </button>
 
-        {/* Notifications */}
         <button className="relative w-9 h-9 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
           <Bell className="w-4 h-4" />
           <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-500 rounded-full ring-2 ring-white dark:ring-slate-900" />
         </button>
 
-        {/* Theme toggle */}
         <button
           onClick={toggleTheme}
           className="w-9 h-9 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"

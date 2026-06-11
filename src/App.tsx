@@ -5,6 +5,12 @@ import { TopBar } from './shared/components/layout/TopBar';
 import { useDashboardStore } from './shared/store/dashboardStore';
 
 const DashboardPage = lazy(() => import('./features/dashboard').then((m) => ({ default: m.Dashboard })));
+const OrdersPage = lazy(() => import('./features/orders').then((m) => ({ default: m.OrdersPage })));
+const AnalyticsPage = lazy(() => import('./features/analytics').then((m) => ({ default: m.AnalyticsPage })));
+const CustomersPage = lazy(() => import('./features/customers').then((m) => ({ default: m.CustomersPage })));
+const ProductsPage = lazy(() => import('./features/products').then((m) => ({ default: m.ProductsPage })));
+const ReportsPage = lazy(() => import('./features/reports').then((m) => ({ default: m.ReportsPage })));
+const SettingsPage = lazy(() => import('./features/settings').then((m) => ({ default: m.SettingsPage })));
 
 function AppLayout() {
   const theme = useDashboardStore((s) => s.theme);
@@ -27,12 +33,12 @@ function AppLayout() {
           <Suspense fallback={<div className="flex items-center justify-center h-full text-slate-400">Loading…</div>}>
             <Routes>
               <Route path="/" element={<DashboardPage />} />
-              <Route path="/analytics" element={<div className="p-5 text-slate-400">Analytics — coming soon</div>} />
-              <Route path="/orders" element={<div className="p-5 text-slate-400">Orders — coming soon</div>} />
-              <Route path="/customers" element={<div className="p-5 text-slate-400">Customers — coming soon</div>} />
-              <Route path="/products" element={<div className="p-5 text-slate-400">Products — coming soon</div>} />
-              <Route path="/reports" element={<div className="p-5 text-slate-400">Reports — coming soon</div>} />
-              <Route path="/settings" element={<div className="p-5 text-slate-400">Settings — coming soon</div>} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
+              <Route path="/orders" element={<OrdersPage />} />
+              <Route path="/customers" element={<CustomersPage />} />
+              <Route path="/products" element={<ProductsPage />} />
+              <Route path="/reports" element={<ReportsPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
             </Routes>
           </Suspense>
         </main>
