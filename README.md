@@ -186,3 +186,4 @@ const store = {
 | [Архитектура](docs/architecture.md) | Структура проекта, Structured Modules, правила зависимостей |
 | [Компоненты](docs/components.md) | KPICard, графики, таблицы, layout |
 | [State Management](docs/state-management.md) | Zustand store, селекторы, типы данных |
+| [Git Workflow](docs/git-workflow.md) | Git flow, conventional commits, GitHub MCP |
