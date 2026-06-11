@@ -1,4 +1,5 @@
 import { Bell, Download, Moon, Sun, Menu } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { useDashboardStore } from '../../store/dashboardStore';
 import { useExport } from '../../hooks/useExport';
 import { clsx } from 'clsx';
@@ -10,11 +11,17 @@ const RANGES: { label: string; value: DateRange }[] = [
   { label: '90D', value: '90d' },
 ];
 
-export function TopBar() {
-  const { theme, toggleTheme, dateRange, setDateRange, activePage, toggleSidebar } = useDashboardStore();
-  const { exportToCSV } = useExport();
+function pathToTitle(pathname: string): string {
+  const segment = pathname.split('/').filter(Boolean)[0] ?? 'dashboard';
+  return segment.charAt(0).toUpperCase() + segment.slice(1);
+}
 
-  const pageTitle = activePage.charAt(0).toUpperCase() + activePage.slice(1);
+export function TopBar() {
+  const { theme, toggleTheme, dateRange, setDateRange, toggleSidebar } = useDashboardStore();
+  const { exportToCSV } = useExport();
+  const location = useLocation();
+
+  const pageTitle = pathToTitle(location.pathname);
 
   return (
     <header className="h-16 flex items-center justify-between px-5 border-b border-slate-200/70 dark:border-slate-700/50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm sticky top-0 z-30 shrink-0">

@@ -1,4 +1,4 @@
-import { topProducts } from '../../data/mockData';
+import { topProducts } from '../../../../shared/data/mockData';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { clsx } from 'clsx';
 

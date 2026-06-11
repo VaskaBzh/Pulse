@@ -56,14 +56,12 @@ interface DashboardStore {
   theme: Theme;
   dateRange: DateRange;
   sidebarOpen: boolean;
-  activePage: string;
   filteredMetrics: DailyMetric[];
   summaryStats: SummaryStats;
 
   toggleTheme: () => void;
   setDateRange: (range: DateRange) => void;
   toggleSidebar: () => void;
-  setActivePage: (page: string) => void;
 }
 
 const initial30d = buildState('30d');
@@ -72,7 +70,6 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
   theme: 'dark',
   dateRange: '30d',
   sidebarOpen: true,
-  activePage: 'dashboard',
   ...initial30d,
 
   toggleTheme: () => {
@@ -84,6 +81,4 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
   setDateRange: (range) => set({ dateRange: range, ...buildState(range) }),
 
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
-
-  setActivePage: (activePage) => set({ activePage }),
 }));
