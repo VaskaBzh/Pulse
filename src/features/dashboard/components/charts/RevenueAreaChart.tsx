@@ -2,7 +2,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { useDashboardStore } from '../../store/dashboardStore';
+import { useDashboardStore } from '../../../../shared/store/dashboardStore';
 import { format, parseISO } from 'date-fns';
 
 function fmt(v: number) {

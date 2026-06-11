@@ -1,5 +1,5 @@
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import { trafficSources } from '../../data/mockData';
+import { trafficSources } from '../../../../shared/data/mockData';
 
 interface TpProps {
   active?: boolean;

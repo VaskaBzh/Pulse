@@ -2,7 +2,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell,
 } from 'recharts';
-import { useDashboardStore } from '../../store/dashboardStore';
+import { useDashboardStore } from '../../../../shared/store/dashboardStore';
 import { format, parseISO } from 'date-fns';
 
 interface TpProps {

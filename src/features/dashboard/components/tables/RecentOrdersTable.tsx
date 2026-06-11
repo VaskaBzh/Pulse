@@ -1,6 +1,6 @@
-import { recentOrders } from '../../data/mockData';
+import { recentOrders } from '../../../../shared/data/mockData';
 import { clsx } from 'clsx';
-import type { Order } from '../../types';
+import type { Order } from '../../../../shared/types';
 
 const STATUS: Record<Order['status'], { label: string; dot: string; bg: string }> = {
   completed: {

@@ -1,10 +1,10 @@
-import { useDashboardStore } from '../store/dashboardStore';
-import { KPICard } from '../components/ui/KPICard';
-import { RevenueAreaChart } from '../components/charts/RevenueAreaChart';
-import { TrafficDonutChart } from '../components/charts/TrafficDonutChart';
-import { OrdersBarChart } from '../components/charts/OrdersBarChart';
-import { RecentOrdersTable } from '../components/tables/RecentOrdersTable';
-import { TopProductsTable } from '../components/tables/TopProductsTable';
+import { useDashboardStore } from '../../shared/store/dashboardStore';
+import { KPICard } from '../../shared/components/ui/KPICard';
+import { RevenueAreaChart } from './components/charts/RevenueAreaChart';
+import { TrafficDonutChart } from './components/charts/TrafficDonutChart';
+import { OrdersBarChart } from './components/charts/OrdersBarChart';
+import { RecentOrdersTable } from './components/tables/RecentOrdersTable';
+import { TopProductsTable } from './components/tables/TopProductsTable';
 import {
   DollarSign, ShoppingCart, Users, TrendingUp, CreditCard, Activity,
 } from 'lucide-react';
