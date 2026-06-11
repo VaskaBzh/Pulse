@@ -1,4 +1,4 @@
-[← Компоненты](components.md) · [Back to README](../README.md)
+[← Компоненты](components.md) · [Back to README](../README.md) · [Git Workflow →](git-workflow.md)
 
 # State Management
 

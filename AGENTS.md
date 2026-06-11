@@ -82,6 +82,7 @@ react-test-2/
 | Архитектура | `docs/architecture.md` | Структура проекта, правила зависимостей |
 | Компоненты | `docs/components.md` | KPICard, графики, таблицы |
 | State Management | `docs/state-management.md` | Zustand store, селекторы, типы |
+| Git Workflow | `docs/git-workflow.md` | Git flow, conventional commits, GitHub MCP |
 | Спецификация | `.ai-factory/DESCRIPTION.md` | Детальная спецификация проекта |
 | Базовые правила | `.ai-factory/rules/base.md` | Соглашения об именовании и паттернах |
 
@@ -115,3 +116,11 @@ react-test-2/
 - Zustand store — единый источник истины для всех вычисляемых данных
 - Компоненты читают только из `src/types/index.ts` для типов
 - Mock-данные только в `src/data/mockData.ts` — не создавай данные в компонентах
+
+## Git Workflow
+
+- Вся разработка ведётся на `feature/*` или `fix/*` ветках, ответвлённых от `develop`
+- Прямые коммиты в `main` и `develop` запрещены — только через PR
+- Все коммиты должны следовать [Conventional Commits](docs/git-workflow.md): `feat(scope): description`
+- Default branch для PR — `develop`, не `main`
+- После merge feature-ветки — удалять её локально: `git branch -d feature/<name>`
