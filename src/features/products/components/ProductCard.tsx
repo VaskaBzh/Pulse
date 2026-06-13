@@ -1,5 +1,6 @@
-import { TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingUp, TrendingDown, Info } from 'lucide-react';
 import { clsx } from 'clsx';
+import { Popover } from '../../../shared/components/ui/Popover';
 import type { Product } from '../../../shared/types';
 
 interface ProductCardProps {
@@ -14,6 +15,14 @@ const CATEGORY_COLORS: Record<string, string> = {
   Bundle: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/25',
 };
 
+const CATEGORY_DESCRIPTIONS: Record<string, string> = {
+  Subscription: 'Recurring revenue plan billed monthly or annually.',
+  Software: 'One-time or perpetual software license product.',
+  Creative: 'Design and creative tools for professionals.',
+  License: 'Enterprise-grade usage license with SLA.',
+  Bundle: 'Discounted package combining multiple products.',
+};
+
 export function ProductCard({ product }: ProductCardProps) {
   const positive = product.growth >= 0;
 
@@ -22,9 +31,25 @@ export function ProductCard({ product }: ProductCardProps) {
       <div className="flex items-start justify-between gap-2 mb-3">
         <div>
           <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{product.name}</p>
-          <span className={clsx('text-[10px] font-semibold px-1.5 py-0.5 rounded-md mt-1 inline-block', CATEGORY_COLORS[product.category] ?? 'text-slate-500 bg-slate-100 dark:bg-slate-700')}>
-            {product.category}
-          </span>
+          <div className="flex items-center gap-1 mt-1">
+            <span className={clsx('text-[10px] font-semibold px-1.5 py-0.5 rounded-md inline-block', CATEGORY_COLORS[product.category] ?? 'text-slate-500 bg-slate-100 dark:bg-slate-700')}>
+              {product.category}
+            </span>
+            <Popover
+              placement="top"
+              trigger={
+                <Info
+                  className="w-3.5 h-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                  aria-label={`Info about ${product.category}`}
+                />
+              }
+              content={
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                  {CATEGORY_DESCRIPTIONS[product.category] ?? 'Product category.'}
+                </p>
+              }
+            />
+          </div>
         </div>
         <div className={clsx(
           'flex items-center gap-0.5 text-xs font-semibold shrink-0 mt-0.5',
