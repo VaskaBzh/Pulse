@@ -32,9 +32,7 @@ export function Popover({ trigger, content, placement = 'bottom' }: PopoverProps
   }, [isOpen]);
 
   const toggle = () => {
-    const next = !isOpen;
-    console.log('[Popover] toggled, isOpen:', next);
-    setIsOpen(next);
+    setIsOpen((prev) => !prev);
   };
 
   return (

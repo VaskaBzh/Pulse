@@ -23,13 +23,10 @@ export function SettingsPage() {
   const { theme, toggleTheme, dateRange, setDateRange } = useDashboardStore();
 
   const handleThemeToggle = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    console.log('[Settings] theme toggled:', newTheme);
     toggleTheme();
   };
 
   const handlePeriodChange = (period: DateRange) => {
-    console.log('[Settings] default period changed:', period);
     setDateRange(period);
   };
 

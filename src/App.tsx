@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Sidebar } from './shared/components/layout/Sidebar';
 import { TopBar } from './shared/components/layout/TopBar';
 import { useDashboardStore } from './shared/store/dashboardStore';
@@ -26,15 +26,10 @@ const SettingsPage = lazy(() =>
 
 function AppLayout() {
   const theme = useDashboardStore((s) => s.theme);
-  const location = useLocation();
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
-
-  useEffect(() => {
-    console.log('[App] navigated to:', location.pathname);
-  }, [location.pathname]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-slate-100 dark:bg-[#080e1a]">

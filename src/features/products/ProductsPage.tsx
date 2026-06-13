@@ -28,15 +28,12 @@ export function ProductsPage() {
   }, [allProducts]);
 
   const handleSort = (key: SortKey) => {
-    console.log('[Products] sort by:', key);
     setSortKey(key);
   };
 
   const sorted = useMemo((): Product[] => {
     const data = (allProducts ?? []).filter((p) => category === 'All' || p.category === category);
-    const result = [...data].sort((a, b) => b[sortKey] - a[sortKey]);
-    console.log('[Products] sort applied', { sortKey, count: result.length });
-    return result;
+    return [...data].sort((a, b) => b[sortKey] - a[sortKey]);
   }, [allProducts, sortKey, category]);
 
   return (

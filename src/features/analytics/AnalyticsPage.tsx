@@ -19,13 +19,6 @@ export function AnalyticsPage() {
     queryFn: fetchRetentionData,
   });
 
-  const isLoading = funnelLoading || retentionLoading;
-  console.log('[Analytics] query state', {
-    isLoading,
-    funnelSteps: funnelData?.length,
-    retentionCohorts: retentionData?.length,
-  });
-
   return (
     <div className="p-5 space-y-5 min-h-full">
       <div>

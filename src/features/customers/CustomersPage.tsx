@@ -30,10 +30,7 @@ export function CustomersPage() {
     queryFn: fetchCustomers,
   });
 
-  console.log('[Customers] query state', { isLoading, count: customers?.length });
-
   const handleSegmentChange = (s: SegmentFilter) => {
-    console.log('[Customers] segment filter:', s);
     setSegment(s);
   };
 
