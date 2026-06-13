@@ -14,6 +14,7 @@ interface OrdersTableProps {
   pageSize: number;
   total: number;
   onPageChange: (p: number) => void;
+  onRowClick?: (order: Order) => void;
 }
 
 const STATUS: Record<Order['status'], { label: string; dot: string; bg: string }> = {
@@ -30,7 +31,7 @@ function SortIcon({ col, sortColumn, sortDir }: { col: SortColumn; sortColumn: S
     : <ChevronDown className="w-3 h-3 text-indigo-500" />;
 }
 
-export function OrdersTable({ orders, sortColumn, sortDir, onSort, page, pageSize, total, onPageChange }: OrdersTableProps) {
+export function OrdersTable({ orders, sortColumn, sortDir, onSort, page, pageSize, total, onPageChange, onRowClick }: OrdersTableProps) {
   const start = page * pageSize + 1;
   const end = Math.min((page + 1) * pageSize, total);
   const totalPages = Math.ceil(total / pageSize);
@@ -77,8 +78,10 @@ export function OrdersTable({ orders, sortColumn, sortDir, onSort, page, pageSiz
               return (
                 <tr
                   key={order.id}
+                  onClick={() => onRowClick?.(order)}
                   className={clsx(
-                    'hover:bg-slate-50/70 dark:hover:bg-slate-700/30 transition-colors cursor-default',
+                    'hover:bg-slate-50/70 dark:hover:bg-slate-700/30 transition-colors',
+                    onRowClick ? 'cursor-pointer' : 'cursor-default',
                     i < orders.length - 1 && 'border-b border-slate-50 dark:border-slate-700/30',
                   )}
                 >

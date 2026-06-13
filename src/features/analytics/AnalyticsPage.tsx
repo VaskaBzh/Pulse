@@ -1,13 +1,26 @@
-import { useEffect } from 'react';
-import { funnelData, retentionData } from '../../shared/data/mockData';
+import { useQuery } from '@tanstack/react-query';
+import { fetchFunnelData, fetchRetentionData } from '../../shared/api';
 import { FunnelChart } from './components/FunnelChart';
 import { RetentionHeatmap } from './components/RetentionHeatmap';
 import { RetentionCurve } from './components/RetentionCurve';
 
+function SkeletonBlock({ h = 'h-48' }: { h?: string }) {
+  return <div className={`animate-pulse ${h} bg-slate-200 dark:bg-slate-700 rounded-xl`} />;
+}
+
 export function AnalyticsPage() {
-  useEffect(() => {
-    console.log('[Analytics] page mounted, data points:', retentionData.length);
-  }, []);
+  const { data: funnelData, isLoading: funnelLoading } = useQuery({
+    queryKey: ['funnelData'],
+    queryFn: fetchFunnelData,
+  });
+
+  const { data: retentionData, isLoading: retentionLoading } = useQuery({
+    queryKey: ['retentionData'],
+    queryFn: fetchRetentionData,
+  });
+
+  const isLoading = funnelLoading || retentionLoading;
+  console.log('[Analytics] query state', { isLoading, funnelSteps: funnelData?.length, retentionCohorts: retentionData?.length });
 
   return (
     <div className="p-5 space-y-5 min-h-full">
@@ -17,11 +30,11 @@ export function AnalyticsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-        <FunnelChart data={funnelData} />
-        <RetentionCurve data={retentionData} />
+        {funnelLoading ? <SkeletonBlock h="h-64" /> : funnelData && <FunnelChart data={funnelData} />}
+        {retentionLoading ? <SkeletonBlock h="h-64" /> : retentionData && <RetentionCurve data={retentionData} />}
       </div>
 
-      <RetentionHeatmap data={retentionData} />
+      {retentionLoading ? <SkeletonBlock h="h-72" /> : retentionData && <RetentionHeatmap data={retentionData} />}
     </div>
   );
 }
