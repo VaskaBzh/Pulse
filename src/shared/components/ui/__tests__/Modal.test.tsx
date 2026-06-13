@@ -26,13 +26,13 @@ describe('Modal', () => {
   describe('isOpen=true', () => {
     it('renders the dialog and title', () => {
       render(<Modal isOpen={true} onClose={noop} title="Order Details" children={<p>body</p>} />);
-      expect(screen.getByRole('dialog')).toBeDefined();
-      expect(screen.getByText('Order Details')).toBeDefined();
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+      expect(screen.getByText('Order Details')).toBeInTheDocument();
     });
 
     it('renders children content', () => {
       render(<Modal isOpen={true} onClose={noop} title="X" children={<p>inner content</p>} />);
-      expect(screen.getByText('inner content')).toBeDefined();
+      expect(screen.getByText('inner content')).toBeInTheDocument();
     });
 
     it('sets body overflow to hidden', () => {

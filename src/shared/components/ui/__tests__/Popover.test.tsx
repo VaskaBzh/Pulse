@@ -16,13 +16,13 @@ describe('Popover', () => {
     it('shows content after clicking trigger', () => {
       render(<Popover trigger={<button>Open</button>} content={<span>menu</span>} />);
       fireEvent.click(screen.getByText('Open'));
-      expect(screen.getByText('menu')).toBeDefined();
+      expect(screen.getByText('menu')).toBeInTheDocument();
     });
 
     it('hides content on second click (toggle)', () => {
       render(<Popover trigger={<button>Open</button>} content={<span>menu</span>} />);
       fireEvent.click(screen.getByText('Open'));
-      expect(screen.getByText('menu')).toBeDefined();
+      expect(screen.getByText('menu')).toBeInTheDocument();
       fireEvent.click(screen.getByText('Open'));
       expect(screen.queryByText('menu')).toBeNull();
     });
@@ -37,7 +37,7 @@ describe('Popover', () => {
         </div>,
       );
       fireEvent.click(screen.getByText('Open'));
-      expect(screen.getByText('menu')).toBeDefined();
+      expect(screen.getByText('menu')).toBeInTheDocument();
       fireEvent.mouseDown(screen.getByTestId('outside'));
       expect(screen.queryByText('menu')).toBeNull();
     });
@@ -46,7 +46,7 @@ describe('Popover', () => {
       render(<Popover trigger={<button>Open</button>} content={<span>menu</span>} />);
       fireEvent.click(screen.getByText('Open'));
       fireEvent.mouseDown(screen.getByText('menu'));
-      expect(screen.getByText('menu')).toBeDefined();
+      expect(screen.getByText('menu')).toBeInTheDocument();
     });
   });
 
