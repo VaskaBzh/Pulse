@@ -13,7 +13,12 @@ interface SegmentBadgeProps {
 
 export function SegmentBadge({ segment }: SegmentBadgeProps) {
   return (
-    <span className={clsx('text-[11px] font-semibold px-2.5 py-1 rounded-full', SEGMENT_STYLES[segment])}>
+    <span
+      className={clsx(
+        'text-[11px] font-semibold px-2.5 py-1 rounded-full',
+        SEGMENT_STYLES[segment],
+      )}
+    >
       {segment}
     </span>
   );

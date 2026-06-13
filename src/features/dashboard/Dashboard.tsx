@@ -1,19 +1,25 @@
-import { useDashboardStore } from '../../shared/store/dashboardStore';
-import { KPICard } from '../../shared/components/ui/KPICard';
+import { DollarSign, ShoppingCart, Users, TrendingUp, CreditCard, Activity } from 'lucide-react';
+import { OrdersBarChart } from './components/charts/OrdersBarChart';
 import { RevenueAreaChart } from './components/charts/RevenueAreaChart';
 import { TrafficDonutChart } from './components/charts/TrafficDonutChart';
-import { OrdersBarChart } from './components/charts/OrdersBarChart';
 import { RecentOrdersTable } from './components/tables/RecentOrdersTable';
 import { TopProductsTable } from './components/tables/TopProductsTable';
-import {
-  DollarSign, ShoppingCart, Users, TrendingUp, CreditCard, Activity,
-} from 'lucide-react';
+import { KPICard } from '../../shared/components/ui/KPICard';
+import { useDashboardStore } from '../../shared/store/dashboardStore';
 
 export function Dashboard() {
   const { summaryStats, filteredMetrics } = useDashboardStore();
 
-  const spark = (key: 'revenue' | 'profit' | 'orders' | 'users' | 'sessions' | 'conversionRate' | 'avgOrderValue') =>
-    filteredMetrics.slice(-14).map((m) => m[key] as number);
+  const spark = (
+    key:
+      | 'revenue'
+      | 'profit'
+      | 'orders'
+      | 'users'
+      | 'sessions'
+      | 'conversionRate'
+      | 'avgOrderValue',
+  ) => filteredMetrics.slice(-14).map((m) => m[key] as number);
 
   const kpis = [
     {
@@ -69,7 +75,9 @@ export function Dashboard() {
   return (
     <div className="p-5 space-y-5 min-h-full">
       <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
-        {kpis.map((k) => <KPICard key={k.title} {...k} />)}
+        {kpis.map((k) => (
+          <KPICard key={k.title} {...k} />
+        ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

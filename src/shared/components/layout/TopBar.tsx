@@ -1,8 +1,8 @@
+import { clsx } from 'clsx';
 import { Bell, Download, Moon, Sun, Menu } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
-import { useDashboardStore } from '../../store/dashboardStore';
 import { useExport } from '../../hooks/useExport';
-import { clsx } from 'clsx';
+import { useDashboardStore } from '../../store/dashboardStore';
 import type { DateRange } from '../../types';
 
 const RANGES: { label: string; value: DateRange }[] = [
@@ -32,9 +32,16 @@ export function TopBar() {
           <Menu className="w-4 h-4" />
         </button>
         <div>
-          <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100 leading-tight">{pageTitle}</h1>
+          <h1 className="text-lg font-semibold text-slate-900 dark:text-slate-100 leading-tight">
+            {pageTitle}
+          </h1>
           <p className="text-xs text-slate-400 dark:text-slate-500 hidden sm:block">
-            {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+            {new Date().toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
           </p>
         </div>
       </div>
@@ -75,10 +82,11 @@ export function TopBar() {
           className="w-9 h-9 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
         >
-          {theme === 'dark'
-            ? <Sun className="w-4 h-4 text-amber-400" />
-            : <Moon className="w-4 h-4" />
-          }
+          {theme === 'dark' ? (
+            <Sun className="w-4 h-4 text-amber-400" />
+          ) : (
+            <Moon className="w-4 h-4" />
+          )}
         </button>
       </div>
     </header>

@@ -1,10 +1,18 @@
+import { clsx } from 'clsx';
 import {
-  LayoutDashboard, TrendingUp, Package, Users, ShoppingCart,
-  FileText, Settings, ChevronLeft, ChevronRight, Zap,
+  LayoutDashboard,
+  TrendingUp,
+  Package,
+  Users,
+  ShoppingCart,
+  FileText,
+  Settings,
+  ChevronLeft,
+  ChevronRight,
+  Zap,
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { useDashboardStore } from '../../store/dashboardStore';
-import { clsx } from 'clsx';
 
 const NAV_ITEMS = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard, end: true },
@@ -50,12 +58,14 @@ export function Sidebar() {
             to={to}
             end={end}
             title={!sidebarOpen ? label : undefined}
-            className={({ isActive }) => clsx(
-              'flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150',
-              isActive
-                ? 'bg-indigo-600/15 text-indigo-400 border border-indigo-500/25'
-                : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent',
-            )}
+            className={({ isActive }) =>
+              clsx(
+                'flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150',
+                isActive
+                  ? 'bg-indigo-600/15 text-indigo-400 border border-indigo-500/25'
+                  : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border border-transparent',
+              )
+            }
           >
             <Icon className="w-[18px] h-[18px] shrink-0" />
             {sidebarOpen && <span className="whitespace-nowrap">{label}</span>}
@@ -68,12 +78,14 @@ export function Sidebar() {
         <NavLink
           to="/settings"
           title={!sidebarOpen ? 'Settings' : undefined}
-          className={({ isActive }) => clsx(
-            'flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 border',
-            isActive
-              ? 'bg-indigo-600/15 text-indigo-400 border-indigo-500/25'
-              : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border-transparent',
-          )}
+          className={({ isActive }) =>
+            clsx(
+              'flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 border',
+              isActive
+                ? 'bg-indigo-600/15 text-indigo-400 border-indigo-500/25'
+                : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200 border-transparent',
+            )
+          }
         >
           <Settings className="w-[18px] h-[18px] shrink-0" />
           {sidebarOpen && <span>Settings</span>}
@@ -97,10 +109,11 @@ export function Sidebar() {
         onClick={toggleSidebar}
         className="absolute -right-3 top-[72px] w-6 h-6 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center hover:bg-indigo-600 hover:border-indigo-500 transition-colors z-20 shadow-lg"
       >
-        {sidebarOpen
-          ? <ChevronLeft className="w-3 h-3 text-slate-300" />
-          : <ChevronRight className="w-3 h-3 text-slate-300" />
-        }
+        {sidebarOpen ? (
+          <ChevronLeft className="w-3 h-3 text-slate-300" />
+        ) : (
+          <ChevronRight className="w-3 h-3 text-slate-300" />
+        )}
       </button>
     </aside>
   );

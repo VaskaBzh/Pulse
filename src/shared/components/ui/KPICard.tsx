@@ -1,5 +1,5 @@
-import { TrendingUp, TrendingDown } from 'lucide-react';
 import { clsx } from 'clsx';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 interface SparklineProps {
@@ -86,10 +86,8 @@ export function KPICard({ title, value, change, sparklineData, icon, color }: KP
                 : 'text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-900/25',
           )}
         >
-          {!neutral && (positive
-            ? <TrendingUp className="w-3 h-3" />
-            : <TrendingDown className="w-3 h-3" />
-          )}
+          {!neutral &&
+            (positive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />)}
           {neutral ? '—' : `${positive ? '+' : ''}${change}%`}
         </div>
         <Sparkline data={sparklineData} color={color} />

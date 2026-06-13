@@ -52,8 +52,12 @@ export function RecentOrdersTable() {
     <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700/50 overflow-hidden">
       <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-700/50">
         <div>
-          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Recent Orders</h3>
-          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Latest 10 transactions</p>
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+            Recent Orders
+          </h3>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+            Latest 10 transactions
+          </p>
         </div>
       </div>
 
@@ -89,23 +93,36 @@ export function RecentOrdersTable() {
                       </td>
                       <td className="px-5 py-3.5">
                         <div>
-                          <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{order.customer}</p>
-                          <p className="text-[11px] text-slate-400 dark:text-slate-500">{order.country}</p>
+                          <p className="text-sm font-medium text-slate-800 dark:text-slate-200">
+                            {order.customer}
+                          </p>
+                          <p className="text-[11px] text-slate-400 dark:text-slate-500">
+                            {order.country}
+                          </p>
                         </div>
                       </td>
-                      <td className="px-5 py-3.5 text-sm text-slate-600 dark:text-slate-300">{order.product}</td>
+                      <td className="px-5 py-3.5 text-sm text-slate-600 dark:text-slate-300">
+                        {order.product}
+                      </td>
                       <td className="px-5 py-3.5">
                         <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">
                           ${order.amount.toFixed(2)}
                         </span>
                       </td>
                       <td className="px-5 py-3.5">
-                        <span className={clsx('inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full', s.bg)}>
+                        <span
+                          className={clsx(
+                            'inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full',
+                            s.bg,
+                          )}
+                        >
                           <span className={clsx('w-1.5 h-1.5 rounded-full shrink-0', s.dot)} />
                           {s.label}
                         </span>
                       </td>
-                      <td className="px-5 py-3.5 text-[11px] text-slate-400 dark:text-slate-500">{order.date}</td>
+                      <td className="px-5 py-3.5 text-[11px] text-slate-400 dark:text-slate-500">
+                        {order.date}
+                      </td>
                     </tr>
                   );
                 })}

@@ -1,5 +1,5 @@
-import { TrendingUp, TrendingDown, Info } from 'lucide-react';
 import { clsx } from 'clsx';
+import { TrendingUp, TrendingDown, Info } from 'lucide-react';
 import { Popover } from '../../../shared/components/ui/Popover';
 import type { Product } from '../../../shared/types';
 
@@ -32,7 +32,13 @@ export function ProductCard({ product }: ProductCardProps) {
         <div>
           <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{product.name}</p>
           <div className="flex items-center gap-1 mt-1">
-            <span className={clsx('text-[10px] font-semibold px-1.5 py-0.5 rounded-md inline-block', CATEGORY_COLORS[product.category] ?? 'text-slate-500 bg-slate-100 dark:bg-slate-700')}>
+            <span
+              className={clsx(
+                'text-[10px] font-semibold px-1.5 py-0.5 rounded-md inline-block',
+                CATEGORY_COLORS[product.category] ??
+                  'text-slate-500 bg-slate-100 dark:bg-slate-700',
+              )}
+            >
               {product.category}
             </span>
             <Popover
@@ -51,24 +57,35 @@ export function ProductCard({ product }: ProductCardProps) {
             />
           </div>
         </div>
-        <div className={clsx(
-          'flex items-center gap-0.5 text-xs font-semibold shrink-0 mt-0.5',
-          positive ? 'text-emerald-500' : 'text-rose-500',
-        )}>
-          {positive ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
-          {positive ? '+' : ''}{product.growth}%
+        <div
+          className={clsx(
+            'flex items-center gap-0.5 text-xs font-semibold shrink-0 mt-0.5',
+            positive ? 'text-emerald-500' : 'text-rose-500',
+          )}
+        >
+          {positive ? (
+            <TrendingUp className="w-3.5 h-3.5" />
+          ) : (
+            <TrendingDown className="w-3.5 h-3.5" />
+          )}
+          {positive ? '+' : ''}
+          {product.growth}%
         </div>
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-3">
         <div>
-          <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Revenue</p>
+          <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">
+            Revenue
+          </p>
           <p className="text-lg font-bold text-slate-900 dark:text-slate-100 tabular-nums">
             ${(product.revenue / 1000).toFixed(1)}k
           </p>
         </div>
         <div>
-          <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">Orders</p>
+          <p className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-1">
+            Orders
+          </p>
           <p className="text-lg font-bold text-slate-900 dark:text-slate-100 tabular-nums">
             {product.orders.toLocaleString()}
           </p>

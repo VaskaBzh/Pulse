@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import { TrendingUp, TrendingDown } from 'lucide-react';
 import { clsx } from 'clsx';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 import { fetchProducts } from '../../../../shared/api';
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -51,16 +51,30 @@ export function TopProductsTable() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2 mb-1.5">
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">{p.name}</span>
-                      <span className={clsx('text-[10px] font-semibold px-1.5 py-0.5 rounded-md shrink-0', CATEGORY_COLORS[p.category] ?? 'text-slate-500 bg-slate-100 dark:bg-slate-700')}>
+                      <span className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">
+                        {p.name}
+                      </span>
+                      <span
+                        className={clsx(
+                          'text-[10px] font-semibold px-1.5 py-0.5 rounded-md shrink-0',
+                          CATEGORY_COLORS[p.category] ??
+                            'text-slate-500 bg-slate-100 dark:bg-slate-700',
+                        )}
+                      >
                         {p.category}
                       </span>
                     </div>
-                    <div className={clsx(
-                      'flex items-center gap-0.5 text-xs font-semibold shrink-0',
-                      p.growth >= 0 ? 'text-emerald-500' : 'text-rose-500',
-                    )}>
-                      {p.growth >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                    <div
+                      className={clsx(
+                        'flex items-center gap-0.5 text-xs font-semibold shrink-0',
+                        p.growth >= 0 ? 'text-emerald-500' : 'text-rose-500',
+                      )}
+                    >
+                      {p.growth >= 0 ? (
+                        <TrendingUp className="w-3 h-3" />
+                      ) : (
+                        <TrendingDown className="w-3 h-3" />
+                      )}
                       {Math.abs(p.growth)}%
                     </div>
                   </div>
@@ -75,7 +89,9 @@ export function TopProductsTable() {
                       ${(p.revenue / 1000).toFixed(1)}k
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">{p.orders} orders</p>
+                  <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">
+                    {p.orders} orders
+                  </p>
                 </div>
               </div>
             ))}

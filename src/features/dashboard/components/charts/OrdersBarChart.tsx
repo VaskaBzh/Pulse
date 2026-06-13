@@ -1,9 +1,15 @@
+import { format, parseISO } from 'date-fns';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Cell,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
 } from 'recharts';
 import { useDashboardStore } from '../../../../shared/store/dashboardStore';
-import { format, parseISO } from 'date-fns';
 
 interface TpProps {
   active?: boolean;
@@ -18,18 +24,25 @@ function ChartTooltip({ active, payload, label }: TpProps) {
       <p className="text-slate-500 dark:text-slate-400 font-medium mb-1">
         {label ? format(parseISO(label), 'EEE, MMM d') : ''}
       </p>
-      <p className="font-bold text-slate-900 dark:text-slate-100">{payload[0].value.toLocaleString()} orders</p>
+      <p className="font-bold text-slate-900 dark:text-slate-100">
+        {payload[0].value.toLocaleString()} orders
+      </p>
     </div>
   );
 }
 
 export function OrdersBarChart() {
   const { filteredMetrics, theme } = useDashboardStore();
-  const data = filteredMetrics.length > 30
-    ? filteredMetrics.filter((_, i) => i % 2 === 0)
-    : filteredMetrics;
+  const data =
+    filteredMetrics.length > 30 ? filteredMetrics.filter((_, i) => i % 2 === 0) : filteredMetrics;
 
-  const tickFmt = (d: string) => { try { return format(parseISO(d), 'MMM d'); } catch { return d; } };
+  const tickFmt = (d: string) => {
+    try {
+      return format(parseISO(d), 'MMM d');
+    } catch {
+      return d;
+    }
+  };
   const gridColor = theme === 'dark' ? '#1e293b' : '#f1f5f9';
   const axisColor = theme === 'dark' ? '#475569' : '#94a3b8';
   const barSize = data.length > 30 ? 5 : 12;

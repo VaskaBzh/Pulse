@@ -9,8 +9,12 @@ export function FunnelChart({ data }: FunnelChartProps) {
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200/80 dark:border-slate-700/50">
-      <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">Conversion Funnel</h3>
-      <p className="text-xs text-slate-400 dark:text-slate-500 mb-5">Visitor-to-paid conversion path</p>
+      <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
+        Conversion Funnel
+      </h3>
+      <p className="text-xs text-slate-400 dark:text-slate-500 mb-5">
+        Visitor-to-paid conversion path
+      </p>
 
       <div className="space-y-3">
         {data.map((step, i) => {
@@ -19,7 +23,9 @@ export function FunnelChart({ data }: FunnelChartProps) {
           return (
             <div key={step.label}>
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{step.label}</span>
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  {step.label}
+                </span>
                 <span className="text-sm font-bold text-slate-900 dark:text-slate-100 tabular-nums">
                   {step.value.toLocaleString()}
                 </span>

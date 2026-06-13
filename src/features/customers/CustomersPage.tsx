@@ -1,10 +1,10 @@
-import { useState, useMemo } from 'react';
-import { Users, DollarSign, UserPlus } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import { clsx } from 'clsx';
+import { Users, DollarSign, UserPlus } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { CustomersTable } from './components/CustomersTable';
 import { fetchCustomers } from '../../shared/api';
 import { useDashboardStore } from '../../shared/store/dashboardStore';
-import { CustomersTable } from './components/CustomersTable';
-import { clsx } from 'clsx';
 import type { Customer } from '../../shared/types';
 
 type SegmentFilter = 'All' | Customer['segment'];
@@ -50,18 +50,24 @@ export function CustomersPage() {
     return Math.round(customers.reduce((sum, c) => sum + c.ltv, 0) / customers.length);
   }, [customers]);
 
-  const filtered = useMemo(() =>
-    segment === 'All' ? (customers ?? []) : (customers ?? []).filter((c) => c.segment === segment),
+  const filtered = useMemo(
+    () =>
+      segment === 'All'
+        ? (customers ?? [])
+        : (customers ?? []).filter((c) => c.segment === segment),
     [customers, segment],
   );
 
-  const periodLabel = dateRange === '7d' ? 'Last 7 days' : dateRange === '30d' ? 'Last 30 days' : 'Last 90 days';
+  const periodLabel =
+    dateRange === '7d' ? 'Last 7 days' : dateRange === '30d' ? 'Last 30 days' : 'Last 90 days';
 
   return (
     <div className="p-5 space-y-5 min-h-full">
       <div>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Customers</h2>
-        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Manage and analyze your customer base</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+          Manage and analyze your customer base
+        </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -71,25 +77,35 @@ export function CustomersPage() {
           <>
             <div className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200/80 dark:border-slate-700/50">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Customers</span>
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  Total Customers
+                </span>
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-indigo-50 dark:bg-indigo-900/25">
                   <Users className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-slate-900 dark:text-slate-50">{customers?.length ?? 0}</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-slate-50">
+                {customers?.length ?? 0}
+              </p>
             </div>
             <div className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200/80 dark:border-slate-700/50">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Avg LTV</span>
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  Avg LTV
+                </span>
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-emerald-50 dark:bg-emerald-900/25">
                   <DollarSign className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 </div>
               </div>
-              <p className="text-2xl font-bold text-slate-900 dark:text-slate-50">${avgLtv.toLocaleString()}</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-slate-50">
+                ${avgLtv.toLocaleString()}
+              </p>
             </div>
             <div className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200/80 dark:border-slate-700/50">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">New ({periodLabel})</span>
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                  New ({periodLabel})
+                </span>
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-50 dark:bg-blue-900/25">
                   <UserPlus className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                 </div>
