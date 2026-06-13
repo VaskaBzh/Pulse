@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { clsx } from 'clsx';
-import { topProducts } from '../../shared/data/mockData';
+import { useQuery } from '@tanstack/react-query';
+import { fetchProducts } from '../../shared/api';
 import { ProductCard } from './components/ProductCard';
 import type { Product } from '../../shared/types';
 
@@ -16,10 +17,15 @@ export function ProductsPage() {
   const [sortKey, setSortKey] = useState<SortKey>('revenue');
   const [category, setCategory] = useState<string>('All');
 
+  const { data: allProducts, isLoading } = useQuery({
+    queryKey: ['products'],
+    queryFn: fetchProducts,
+  });
+
   const categories = useMemo(() => {
-    const unique = [...new Set(topProducts.map((p) => p.category))];
+    const unique = [...new Set((allProducts ?? []).map((p) => p.category))];
     return ['All', ...unique];
-  }, []);
+  }, [allProducts]);
 
   const handleSort = (key: SortKey) => {
     console.log('[Products] sort by:', key);
@@ -27,9 +33,11 @@ export function ProductsPage() {
   };
 
   const sorted = useMemo((): Product[] => {
-    const data = category === 'All' ? topProducts : topProducts.filter((p) => p.category === category);
-    return [...data].sort((a, b) => b[sortKey] - a[sortKey]);
-  }, [sortKey, category]);
+    const data = (allProducts ?? []).filter((p) => category === 'All' || p.category === category);
+    const result = [...data].sort((a, b) => b[sortKey] - a[sortKey]);
+    console.log('[Products] sort applied', { sortKey, count: result.length });
+    return result;
+  }, [allProducts, sortKey, category]);
 
   return (
     <div className="p-5 space-y-5 min-h-full">
@@ -39,7 +47,6 @@ export function ProductsPage() {
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-        {/* Sort */}
         <div className="flex items-center gap-1.5">
           <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Sort:</span>
           <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg p-1 border border-slate-200/60 dark:border-slate-700/50">
@@ -60,7 +67,6 @@ export function ProductsPage() {
           </div>
         </div>
 
-        {/* Category filter */}
         <div className="flex items-center gap-1.5">
           <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Category:</span>
           <select
@@ -75,9 +81,17 @@ export function ProductsPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-        {sorted.map((p) => <ProductCard key={p.id} product={p} />)}
-      </div>
+      {isLoading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="animate-pulse h-40 bg-slate-200 dark:bg-slate-700 rounded-xl" />
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+          {sorted.map((p) => <ProductCard key={p.id} product={p} />)}
+        </div>
+      )}
     </div>
   );
 }

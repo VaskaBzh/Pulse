@@ -1,11 +1,24 @@
-import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import { recentOrders } from '../../shared/data/mockData';
+import { useState, useMemo, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { fetchOrders } from '../../shared/api';
 import { OrdersFilters } from './components/OrdersFilters';
 import { OrdersTable } from './components/OrdersTable';
 import type { StatusFilter } from './components/OrdersFilters';
 import type { SortColumn, SortDir } from './components/OrdersTable';
 
 const PAGE_SIZE = 10;
+
+function SkeletonTable() {
+  return (
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700/50 overflow-hidden">
+      <div className="p-5 space-y-3">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div key={i} className="animate-pulse h-10 bg-slate-100 dark:bg-slate-700 rounded" />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function OrdersPage() {
   const [query, setQuery] = useState('');
@@ -14,16 +27,19 @@ export function OrdersPage() {
   const [sortColumn, setSortColumn] = useState<SortColumn>('date');
   const [sortDir, setSortDir] = useState<SortDir>('desc');
   const [page, setPage] = useState(0);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    debounceRef.current = setTimeout(() => {
-      setDebouncedQuery(query);
-      setPage(0);
-    }, 300);
-    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
-  }, [query]);
+  const { data: allOrders, isLoading } = useQuery({
+    queryKey: ['orders'],
+    queryFn: fetchOrders,
+  });
+
+  console.log('[Orders] query state', { isLoading, count: allOrders?.length });
+
+  const handleQueryChange = useCallback((v: string) => {
+    setQuery(v);
+    const id = setTimeout(() => { setDebouncedQuery(v); setPage(0); }, 300);
+    return () => clearTimeout(id);
+  }, []);
 
   const handleStatusChange = useCallback((v: StatusFilter) => {
     console.log('[Orders] filter changed', { status: v, query: debouncedQuery });
@@ -35,11 +51,11 @@ export function OrdersPage() {
     setSortDir((prev) => (sortColumn === col ? (prev === 'asc' ? 'desc' : 'asc') : 'desc'));
     setSortColumn(col);
     setPage(0);
-    console.log('[Orders] sort changed', { column: col, direction: sortColumn === col && sortDir === 'desc' ? 'asc' : 'desc' });
-  }, [sortColumn, sortDir]);
+    console.log('[Orders] sort changed', { column: col });
+  }, [sortColumn]);
 
   const filtered = useMemo(() => {
-    let data = recentOrders;
+    let data = allOrders ?? [];
     if (status !== 'all') data = data.filter((o) => o.status === status);
     if (debouncedQuery) {
       const q = debouncedQuery.toLowerCase();
@@ -53,7 +69,7 @@ export function OrdersPage() {
       return a.date.localeCompare(b.date) * dir;
     });
     return data;
-  }, [status, debouncedQuery, sortColumn, sortDir]);
+  }, [allOrders, status, debouncedQuery, sortColumn, sortDir]);
 
   const paged = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
@@ -66,19 +82,23 @@ export function OrdersPage() {
       <OrdersFilters
         query={query}
         status={status}
-        onQueryChange={setQuery}
+        onQueryChange={handleQueryChange}
         onStatusChange={handleStatusChange}
       />
-      <OrdersTable
-        orders={paged}
-        sortColumn={sortColumn}
-        sortDir={sortDir}
-        onSort={handleSort}
-        page={page}
-        pageSize={PAGE_SIZE}
-        total={filtered.length}
-        onPageChange={setPage}
-      />
+      {isLoading ? (
+        <SkeletonTable />
+      ) : (
+        <OrdersTable
+          orders={paged}
+          sortColumn={sortColumn}
+          sortDir={sortDir}
+          onSort={handleSort}
+          page={page}
+          pageSize={PAGE_SIZE}
+          total={filtered.length}
+          onPageChange={setPage}
+        />
+      )}
     </div>
   );
 }
