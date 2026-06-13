@@ -35,3 +35,6 @@ AGENTS.md
 # Playwright / тестовые артефакты
 playwright-report/
 test-results/
+
+# Vitest coverage
+coverage/
