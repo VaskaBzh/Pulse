@@ -56,6 +56,6 @@ test.describe('Dashboard — golden path', () => {
     await page.getByRole('link', { name: 'Analytics' }).click();
     await expect(page).toHaveURL('/analytics');
     await page.evaluate(() => console.log('[e2e:dashboard] step: verify analytics heading'));
-    await expect(page.getByRole('heading', { name: 'Analytics' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Analytics' }).first()).toBeVisible();
   });
 });

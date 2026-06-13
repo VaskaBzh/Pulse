@@ -17,7 +17,7 @@ test.describe('Orders — critical scenarios', () => {
     await expect(page.getByRole('table')).toBeVisible();
     // Header columns should be present
     await expect(page.getByText('Order ID')).toBeVisible();
-    await expect(page.getByText('Customer')).toBeVisible();
+    await expect(page.getByRole('columnheader', { name: 'Customer' })).toBeVisible();
   });
 
   test('search input filters rows after debounce', async ({ page }) => {

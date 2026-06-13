@@ -1,7 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const isCI = !!process.env.CI;
-const baseURL = isCI ? 'http://localhost:4173' : 'http://localhost:5173';
+const port = isCI ? 4173 : 5173;
+const baseURL = `http://127.0.0.1:${port}`;
 
 export default defineConfig({
   testDir: './e2e',
@@ -16,8 +17,11 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: isCI ? 'npm run preview' : 'npm run dev',
+    command: isCI
+      ? `npx vite preview --port ${port} --host 127.0.0.1`
+      : `npx vite dev --port ${port} --host 127.0.0.1`,
     url: baseURL,
     reuseExistingServer: !isCI,
+    timeout: 120_000,
   },
 });

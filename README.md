@@ -1,6 +1,10 @@
 # Pulse — Analytics Dashboard
 
+[![CI](https://github.com/VaskaBzh/Pulse/actions/workflows/ci.yml/badge.svg)](https://github.com/VaskaBzh/Pulse/actions/workflows/ci.yml)
+
 Профессиональный SaaS-дашборд для аналитики метрик интернет-магазина / контент-платформы.
+
+> **Live Demo:** _deploy preview появится после подключения Vercel (см. [secrets setup](#deploy-preview-setup))_
 
 ## Стек технологий
 
