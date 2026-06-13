@@ -1,8 +1,8 @@
-import { useState, useMemo } from 'react';
-import { clsx } from 'clsx';
 import { useQuery } from '@tanstack/react-query';
-import { fetchProducts } from '../../shared/api';
+import { clsx } from 'clsx';
+import { useState, useMemo } from 'react';
 import { ProductCard } from './components/ProductCard';
+import { fetchProducts } from '../../shared/api';
 import type { Product } from '../../shared/types';
 
 type SortKey = 'revenue' | 'orders' | 'growth';
@@ -43,7 +43,9 @@ export function ProductsPage() {
     <div className="p-5 space-y-5 min-h-full">
       <div>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Products</h2>
-        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Product catalog with performance metrics</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+          Product catalog with performance metrics
+        </p>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
@@ -75,7 +77,9 @@ export function ProductsPage() {
             className="text-xs font-medium px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
           >
             {categories.map((c) => (
-              <option key={c} value={c}>{c}</option>
+              <option key={c} value={c}>
+                {c}
+              </option>
             ))}
           </select>
         </div>
@@ -89,7 +93,9 @@ export function ProductsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {sorted.map((p) => <ProductCard key={p.id} product={p} />)}
+          {sorted.map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
         </div>
       )}
     </div>

@@ -19,12 +19,32 @@ export function useExport() {
 
   const exportToCSV = () => {
     console.log('[Reports] export triggered', { type: 'metrics', format: 'csv', dateRange });
-    const headers = ['Date', 'Revenue ($)', 'Profit ($)', 'Orders', 'Users', 'Sessions', 'Conversion Rate (%)', 'Avg Order Value ($)'];
+    const headers = [
+      'Date',
+      'Revenue ($)',
+      'Profit ($)',
+      'Orders',
+      'Users',
+      'Sessions',
+      'Conversion Rate (%)',
+      'Avg Order Value ($)',
+    ];
     const rows = filteredMetrics.map((m) => [
-      m.date, m.revenue, m.profit, m.orders, m.users, m.sessions, m.conversionRate, m.avgOrderValue,
+      m.date,
+      m.revenue,
+      m.profit,
+      m.orders,
+      m.users,
+      m.sessions,
+      m.conversionRate,
+      m.avgOrderValue,
     ]);
     const csv = [headers, ...rows].map((row) => row.join(',')).join('\n');
-    download(csv, `pulse-analytics-${dateRange}-${new Date().toISOString().slice(0, 10)}.csv`, 'text/csv');
+    download(
+      csv,
+      `pulse-analytics-${dateRange}-${new Date().toISOString().slice(0, 10)}.csv`,
+      'text/csv',
+    );
   };
 
   const exportData = (type: ReportType, format: ExportFormat, data: unknown[]) => {
@@ -35,7 +55,9 @@ export function useExport() {
     } else {
       if (data.length === 0) return;
       const headers = Object.keys(data[0] as object);
-      const rows = (data as Record<string, unknown>[]).map((row) => headers.map((h) => row[h] ?? ''));
+      const rows = (data as Record<string, unknown>[]).map((row) =>
+        headers.map((h) => row[h] ?? ''),
+      );
       const csv = [headers, ...rows].map((row) => row.join(',')).join('\n');
       download(csv, `${filename}.csv`, 'text/csv');
     }

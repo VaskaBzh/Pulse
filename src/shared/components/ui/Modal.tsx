@@ -1,5 +1,5 @@
-import { useEffect, type ReactNode } from 'react';
 import { X } from 'lucide-react';
+import { useEffect, type ReactNode } from 'react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -39,7 +39,10 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/50 transition-opacity"
-        onClick={() => { console.log('[Modal] closed'); onClose(); }}
+        onClick={() => {
+          console.log('[Modal] closed');
+          onClose();
+        }}
       />
 
       {/* Panel */}
@@ -49,7 +52,10 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
             {title}
           </h2>
           <button
-            onClick={() => { console.log('[Modal] closed'); onClose(); }}
+            onClick={() => {
+              console.log('[Modal] closed');
+              onClose();
+            }}
             className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
             aria-label="Close modal"
           >

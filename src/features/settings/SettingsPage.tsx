@@ -1,5 +1,5 @@
-import { Moon, Sun, Clock } from 'lucide-react';
 import { clsx } from 'clsx';
+import { Moon, Sun, Clock } from 'lucide-react';
 import { useDashboardStore } from '../../shared/store/dashboardStore';
 import type { DateRange } from '../../shared/types';
 
@@ -10,7 +10,14 @@ const PERIODS: { value: DateRange; label: string }[] = [
 ];
 
 const APP_VERSION = '0.0.0';
-const STACK = ['React 19', 'TypeScript 6', 'Tailwind CSS v4', 'Recharts v3', 'Zustand v5', 'Vite v8'];
+const STACK = [
+  'React 19',
+  'TypeScript 6',
+  'Tailwind CSS v4',
+  'Recharts v3',
+  'Zustand v5',
+  'Vite v8',
+];
 
 export function SettingsPage() {
   const { theme, toggleTheme, dateRange, setDateRange } = useDashboardStore();
@@ -41,10 +48,11 @@ export function SettingsPage() {
         <div className="px-5 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              {theme === 'dark'
-                ? <Moon className="w-5 h-5 text-indigo-400" />
-                : <Sun className="w-5 h-5 text-amber-500" />
-              }
+              {theme === 'dark' ? (
+                <Moon className="w-5 h-5 text-indigo-400" />
+              ) : (
+                <Sun className="w-5 h-5 text-amber-500" />
+              )}
               <div>
                 <p className="text-sm font-medium text-slate-800 dark:text-slate-200">Theme</p>
                 <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
@@ -59,10 +67,12 @@ export function SettingsPage() {
                 theme === 'dark' ? 'bg-indigo-600' : 'bg-slate-300',
               )}
             >
-              <span className={clsx(
-                'absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200',
-                theme === 'dark' ? 'translate-x-5' : 'translate-x-0',
-              )} />
+              <span
+                className={clsx(
+                  'absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-200',
+                  theme === 'dark' ? 'translate-x-5' : 'translate-x-0',
+                )}
+              />
             </button>
           </div>
         </div>
@@ -71,7 +81,9 @@ export function SettingsPage() {
       {/* Default period */}
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700/50">
         <div className="px-5 py-4 border-b border-slate-100 dark:border-slate-700/50">
-          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Default Period</h3>
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+            Default Period
+          </h3>
         </div>
         <div className="px-5 py-4 space-y-3">
           <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500 mb-1">
@@ -88,12 +100,14 @@ export function SettingsPage() {
                 onChange={() => handlePeriodChange(value)}
                 className="w-4 h-4 accent-indigo-600"
               />
-              <span className={clsx(
-                'text-sm font-medium transition-colors',
-                dateRange === value
-                  ? 'text-indigo-600 dark:text-indigo-400'
-                  : 'text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100',
-              )}>
+              <span
+                className={clsx(
+                  'text-sm font-medium transition-colors',
+                  dateRange === value
+                    ? 'text-indigo-600 dark:text-indigo-400'
+                    : 'text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100',
+                )}
+              >
                 {label}
               </span>
             </label>
@@ -109,17 +123,24 @@ export function SettingsPage() {
         <div className="px-5 py-4 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-sm text-slate-500 dark:text-slate-400">Application</span>
-            <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">Pulse Dashboard</span>
+            <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+              Pulse Dashboard
+            </span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-sm text-slate-500 dark:text-slate-400">Version</span>
-            <span className="text-sm font-mono text-slate-600 dark:text-slate-300">v{APP_VERSION}</span>
+            <span className="text-sm font-mono text-slate-600 dark:text-slate-300">
+              v{APP_VERSION}
+            </span>
           </div>
           <div>
             <span className="text-sm text-slate-500 dark:text-slate-400 block mb-2">Stack</span>
             <div className="flex flex-wrap gap-1.5">
               {STACK.map((tech) => (
-                <span key={tech} className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                <span
+                  key={tech}
+                  className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
+                >
                   {tech}
                 </span>
               ))}

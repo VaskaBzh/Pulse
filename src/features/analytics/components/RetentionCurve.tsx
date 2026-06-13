@@ -1,5 +1,11 @@
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
 } from 'recharts';
 import { useDashboardStore } from '../../../shared/store/dashboardStore';
 import type { RetentionRow } from '../../../shared/types';
@@ -19,7 +25,9 @@ function ChartTooltip({ active, payload, label }: TpProps) {
   return (
     <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 shadow-xl text-xs">
       <p className="text-slate-500 dark:text-slate-400 mb-1">{label}</p>
-      <p className="font-bold text-indigo-600 dark:text-indigo-400">{payload[0].value.toFixed(1)}% retained</p>
+      <p className="font-bold text-indigo-600 dark:text-indigo-400">
+        {payload[0].value.toFixed(1)}% retained
+      </p>
     </div>
   );
 }
@@ -42,8 +50,12 @@ export function RetentionCurve({ data }: RetentionCurveProps) {
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200/80 dark:border-slate-700/50">
-      <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">Average Retention Curve</h3>
-      <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">Mean retention across all cohorts</p>
+      <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 mb-1">
+        Average Retention Curve
+      </h3>
+      <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">
+        Mean retention across all cohorts
+      </p>
 
       <ResponsiveContainer width="100%" height={200}>
         <LineChart data={chartData} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>

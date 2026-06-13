@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect, type ReactNode } from 'react';
 import { clsx } from 'clsx';
+import { useState, useRef, useEffect, type ReactNode } from 'react';
 
 type Placement = 'top' | 'bottom' | 'left' | 'right';
 

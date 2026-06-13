@@ -1,14 +1,14 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useQuery } from '@tanstack/react-query';
+import { clsx } from 'clsx';
+import { Download } from 'lucide-react';
 import { useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Download } from 'lucide-react';
-import { clsx } from 'clsx';
-import { useQuery } from '@tanstack/react-query';
-import { fetchOrders, fetchCustomers, fetchProducts } from '../../shared/api';
-import { useDashboardStore } from '../../shared/store/dashboardStore';
-import { useExport } from '../../shared/hooks/useExport';
 import { ReportPreview } from './components/ReportPreview';
+import { fetchOrders, fetchCustomers, fetchProducts } from '../../shared/api';
+import { useExport } from '../../shared/hooks/useExport';
 import { reportExportSchema, type ReportExportValues } from '../../shared/lib/validation';
+import { useDashboardStore } from '../../shared/store/dashboardStore';
 
 type ReportType = ReportExportValues['reportType'];
 type ExportFormat = ReportExportValues['format'];
@@ -30,7 +30,12 @@ export function ReportsPage() {
   const { data: customers } = useQuery({ queryKey: ['customers'], queryFn: fetchCustomers });
   const { data: products } = useQuery({ queryKey: ['products'], queryFn: fetchProducts });
 
-  const { handleSubmit, watch, setValue, formState: { errors } } = useForm<ReportExportValues>({
+  const {
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<ReportExportValues>({
     resolver: zodResolver(reportExportSchema),
     defaultValues: { reportType: 'Sales', format: 'CSV' },
   });
@@ -47,11 +52,29 @@ export function ReportsPage() {
       case 'Sales':
         return filteredMetrics.map((m) => ({ date: m.date, revenue: m.revenue, profit: m.profit }));
       case 'Orders':
-        return (orders ?? []).map((o) => ({ id: o.id, customer: o.customer, amount: o.amount, status: o.status, date: o.date }));
+        return (orders ?? []).map((o) => ({
+          id: o.id,
+          customer: o.customer,
+          amount: o.amount,
+          status: o.status,
+          date: o.date,
+        }));
       case 'Customers':
-        return (customers ?? []).map((c) => ({ name: c.name, email: c.email, segment: c.segment, ltv: c.ltv, country: c.country }));
+        return (customers ?? []).map((c) => ({
+          name: c.name,
+          email: c.email,
+          segment: c.segment,
+          ltv: c.ltv,
+          country: c.country,
+        }));
       case 'Products':
-        return (products ?? []).map((p) => ({ name: p.name, category: p.category, revenue: p.revenue, orders: p.orders, growth: `${p.growth}%` }));
+        return (products ?? []).map((p) => ({
+          name: p.name,
+          category: p.category,
+          revenue: p.revenue,
+          orders: p.orders,
+          growth: `${p.growth}%`,
+        }));
       default:
         return [];
     }
@@ -59,8 +82,17 @@ export function ReportsPage() {
 
   const onExport = (values: ReportExportValues) => {
     console.log('[Reports] form submitted', { ...values, dateRange });
-    const typeMap: Record<ReportType, string> = { Sales: 'metrics', Orders: 'orders', Customers: 'customers', Products: 'products' };
-    exportData(typeMap[values.reportType] as 'metrics' | 'orders' | 'customers' | 'products', values.format.toLowerCase() as 'csv' | 'json', previewData);
+    const typeMap: Record<ReportType, string> = {
+      Sales: 'metrics',
+      Orders: 'orders',
+      Customers: 'customers',
+      Products: 'products',
+    };
+    exportData(
+      typeMap[values.reportType] as 'metrics' | 'orders' | 'customers' | 'products',
+      values.format.toLowerCase() as 'csv' | 'json',
+      previewData,
+    );
   };
 
   if (errors.reportType || errors.format) {
@@ -71,7 +103,9 @@ export function ReportsPage() {
     <div className="p-5 space-y-5 min-h-full">
       <div>
         <h2 className="text-lg font-semibold text-slate-900 dark:text-slate-100">Reports</h2>
-        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Generate and export data reports</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+          Generate and export data reports
+        </p>
       </div>
 
       <form onSubmit={handleSubmit(onExport)}>

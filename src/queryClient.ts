@@ -9,4 +9,7 @@ export const queryClient = new QueryClient({
   },
 });
 
-console.log('[QueryClient] initialized, staleTime:', queryClient.getDefaultOptions().queries?.staleTime);
+console.log(
+  '[QueryClient] initialized, staleTime:',
+  queryClient.getDefaultOptions().queries?.staleTime,
+);

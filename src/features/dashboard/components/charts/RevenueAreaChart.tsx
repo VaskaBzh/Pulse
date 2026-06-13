@@ -1,9 +1,14 @@
+import { format, parseISO } from 'date-fns';
 import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
 } from 'recharts';
 import { useDashboardStore } from '../../../../shared/store/dashboardStore';
-import { format, parseISO } from 'date-fns';
 
 function fmt(v: number) {
   return v >= 1000 ? `$${(v / 1000).toFixed(1)}k` : `$${v}`;
@@ -26,7 +31,9 @@ function ChartTooltip({ active, payload, label }: TpProps) {
         <div key={e.name} className="flex items-center gap-2 mb-1 last:mb-0">
           <span className="w-2 h-2 rounded-full shrink-0" style={{ background: e.color }} />
           <span className="text-slate-500 dark:text-slate-400 capitalize">{e.name}:</span>
-          <span className="font-semibold text-slate-900 dark:text-slate-100">${e.value.toLocaleString()}</span>
+          <span className="font-semibold text-slate-900 dark:text-slate-100">
+            ${e.value.toLocaleString()}
+          </span>
         </div>
       ))}
     </div>
@@ -35,11 +42,16 @@ function ChartTooltip({ active, payload, label }: TpProps) {
 
 export function RevenueAreaChart() {
   const { filteredMetrics, theme } = useDashboardStore();
-  const data = filteredMetrics.length > 30
-    ? filteredMetrics.filter((_, i) => i % 2 === 0)
-    : filteredMetrics;
+  const data =
+    filteredMetrics.length > 30 ? filteredMetrics.filter((_, i) => i % 2 === 0) : filteredMetrics;
 
-  const tickFmt = (d: string) => { try { return format(parseISO(d), 'MMM d'); } catch { return d; } };
+  const tickFmt = (d: string) => {
+    try {
+      return format(parseISO(d), 'MMM d');
+    } catch {
+      return d;
+    }
+  };
   const gridColor = theme === 'dark' ? '#1e293b' : '#f1f5f9';
   const axisColor = theme === 'dark' ? '#475569' : '#94a3b8';
 
@@ -47,15 +59,21 @@ export function RevenueAreaChart() {
     <div className="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200/80 dark:border-slate-700/50">
       <div className="flex items-start justify-between mb-5">
         <div>
-          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">Revenue & Profit</h3>
-          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Daily performance trend</p>
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+            Revenue & Profit
+          </h3>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+            Daily performance trend
+          </p>
         </div>
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-            <span className="w-6 h-0.5 bg-indigo-500 rounded-full inline-block" />Revenue
+            <span className="w-6 h-0.5 bg-indigo-500 rounded-full inline-block" />
+            Revenue
           </span>
           <span className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-            <span className="w-6 h-0.5 bg-emerald-500 rounded-full inline-block" />Profit
+            <span className="w-6 h-0.5 bg-emerald-500 rounded-full inline-block" />
+            Profit
           </span>
         </div>
       </div>
@@ -88,9 +106,24 @@ export function RevenueAreaChart() {
             tickLine={false}
             width={46}
           />
-          <Tooltip content={<ChartTooltip />} cursor={{ stroke: '#6366f1', strokeWidth: 1, strokeDasharray: '4 4' }} />
-          <Area type="monotone" dataKey="revenue" stroke="#6366f1" strokeWidth={2} fill="url(#gRev)" />
-          <Area type="monotone" dataKey="profit" stroke="#10b981" strokeWidth={2} fill="url(#gPro)" />
+          <Tooltip
+            content={<ChartTooltip />}
+            cursor={{ stroke: '#6366f1', strokeWidth: 1, strokeDasharray: '4 4' }}
+          />
+          <Area
+            type="monotone"
+            dataKey="revenue"
+            stroke="#6366f1"
+            strokeWidth={2}
+            fill="url(#gRev)"
+          />
+          <Area
+            type="monotone"
+            dataKey="profit"
+            stroke="#10b981"
+            strokeWidth={2}
+            fill="url(#gPro)"
+          />
         </AreaChart>
       </ResponsiveContainer>
     </div>

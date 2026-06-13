@@ -1,5 +1,13 @@
 import { format, subDays } from 'date-fns';
-import type { DailyMetric, Order, Product, TrafficSource, Customer, FunnelStep, RetentionRow } from '../types';
+import type {
+  DailyMetric,
+  Order,
+  Product,
+  TrafficSource,
+  Customer,
+  FunnelStep,
+  RetentionRow,
+} from '../types';
 
 function sr(seed: number): number {
   const x = Math.sin(seed + 1) * 10000;
@@ -42,7 +50,14 @@ export const trafficSources: TrafficSource[] = [
 ];
 
 const COUNTRIES = ['USA', 'UK', 'Germany', 'France', 'Canada', 'Australia', 'Japan', 'Brazil'];
-const PRODUCTS = ['Pro Plan', 'Starter Kit', 'Analytics Suite', 'Designer Pack', 'Enterprise License', 'Growth Bundle'];
+const PRODUCTS = [
+  'Pro Plan',
+  'Starter Kit',
+  'Analytics Suite',
+  'Designer Pack',
+  'Enterprise License',
+  'Growth Bundle',
+];
 const CUSTOMER_NAMES: [string, string][] = [
   ['Alex Johnson', 'alex@example.com'],
   ['Maria Garcia', 'maria@example.com'],
@@ -63,7 +78,8 @@ export const recentOrders: Order[] = Array.from({ length: 28 }, (_, i) => {
   const customer = CUSTOMER_NAMES[Math.floor(s(1) * CUSTOMER_NAMES.length)];
   const daysAgo = Math.floor(s(2) * 14);
   const r = s(3) * 10;
-  const status: Order['status'] = r < 6 ? 'completed' : r < 8 ? 'pending' : r < 9 ? 'cancelled' : 'refunded';
+  const status: Order['status'] =
+    r < 6 ? 'completed' : r < 8 ? 'pending' : r < 9 ? 'cancelled' : 'refunded';
   return {
     id: `ORD-${(10000 + i * 137).toString()}`,
     customer: customer[0],
@@ -77,26 +93,71 @@ export const recentOrders: Order[] = Array.from({ length: 28 }, (_, i) => {
 });
 
 export const topProducts: Product[] = [
-  { id: '1', name: 'Pro Plan', category: 'Subscription', revenue: 48420, orders: 312, growth: 18.4 },
-  { id: '2', name: 'Analytics Suite', category: 'Software', revenue: 31850, orders: 127, growth: 24.1 },
-  { id: '3', name: 'Designer Pack', category: 'Creative', revenue: 22340, orders: 186, growth: -5.2 },
-  { id: '4', name: 'Starter Kit', category: 'Subscription', revenue: 18920, orders: 421, growth: 11.7 },
-  { id: '5', name: 'Enterprise License', category: 'License', revenue: 16500, orders: 22, growth: 34.6 },
+  {
+    id: '1',
+    name: 'Pro Plan',
+    category: 'Subscription',
+    revenue: 48420,
+    orders: 312,
+    growth: 18.4,
+  },
+  {
+    id: '2',
+    name: 'Analytics Suite',
+    category: 'Software',
+    revenue: 31850,
+    orders: 127,
+    growth: 24.1,
+  },
+  {
+    id: '3',
+    name: 'Designer Pack',
+    category: 'Creative',
+    revenue: 22340,
+    orders: 186,
+    growth: -5.2,
+  },
+  {
+    id: '4',
+    name: 'Starter Kit',
+    category: 'Subscription',
+    revenue: 18920,
+    orders: 421,
+    growth: 11.7,
+  },
+  {
+    id: '5',
+    name: 'Enterprise License',
+    category: 'License',
+    revenue: 16500,
+    orders: 22,
+    growth: 34.6,
+  },
   { id: '6', name: 'Growth Bundle', category: 'Bundle', revenue: 12180, orders: 94, growth: 8.3 },
 ];
 
-const SEGMENTS: Customer['segment'][] = ['Enterprise', 'Pro', 'Pro', 'Starter', 'Starter', 'Starter'];
+const SEGMENTS: Customer['segment'][] = [
+  'Enterprise',
+  'Pro',
+  'Pro',
+  'Starter',
+  'Starter',
+  'Starter',
+];
 
 export const customers: Customer[] = Array.from({ length: 20 }, (_, i) => {
   const s = (n: number) => sr(i * 31 + n);
   const [name, email] = CUSTOMER_NAMES[i % CUSTOMER_NAMES.length];
   const segment = SEGMENTS[Math.floor(s(1) * SEGMENTS.length)];
-  const ltv = segment === 'Enterprise'
-    ? Math.round(2000 + s(2) * 8000)
-    : segment === 'Pro'
-      ? Math.round(500 + s(2) * 1500)
-      : Math.round(50 + s(2) * 450);
-  const orders = Math.round(1 + s(3) * (segment === 'Enterprise' ? 40 : segment === 'Pro' ? 15 : 8));
+  const ltv =
+    segment === 'Enterprise'
+      ? Math.round(2000 + s(2) * 8000)
+      : segment === 'Pro'
+        ? Math.round(500 + s(2) * 1500)
+        : Math.round(50 + s(2) * 450);
+  const orders = Math.round(
+    1 + s(3) * (segment === 'Enterprise' ? 40 : segment === 'Pro' ? 15 : 8),
+  );
   const daysAgo = Math.round(30 + s(4) * 300);
   return {
     id: `USR-${(1000 + i * 43).toString()}`,

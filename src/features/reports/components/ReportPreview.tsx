@@ -29,7 +29,10 @@ export function ReportPreview({ type, data }: ReportPreviewProps) {
           <thead>
             <tr className="border-b border-slate-100 dark:border-slate-700/50">
               {headers.map((h) => (
-                <th key={h} className="text-left px-4 py-2.5 font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                <th
+                  key={h}
+                  className="text-left px-4 py-2.5 font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider whitespace-nowrap"
+                >
                   {h}
                 </th>
               ))}
@@ -45,7 +48,10 @@ export function ReportPreview({ type, data }: ReportPreviewProps) {
                 )}
               >
                 {headers.map((h) => (
-                  <td key={h} className="px-4 py-2.5 text-slate-600 dark:text-slate-300 whitespace-nowrap">
+                  <td
+                    key={h}
+                    className="px-4 py-2.5 text-slate-600 dark:text-slate-300 whitespace-nowrap"
+                  >
                     {String(row[h] ?? '')}
                   </td>
                 ))}

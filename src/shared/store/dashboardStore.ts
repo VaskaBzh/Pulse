@@ -15,7 +15,7 @@ function avgField(arr: DailyMetric[], key: keyof DailyMetric): number {
 }
 
 function pct(curr: number, prev: number): number {
-  return prev === 0 ? 0 : parseFloat(((curr - prev) / prev * 100).toFixed(1));
+  return prev === 0 ? 0 : parseFloat((((curr - prev) / prev) * 100).toFixed(1));
 }
 
 function computeStats(current: DailyMetric[], prev: DailyMetric[]): SummaryStats {
