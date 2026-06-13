@@ -107,7 +107,7 @@ export function OrdersPage() {
 
       {selectedOrder && (
         <Modal
-          isOpen={!!selectedOrder}
+          isOpen
           onClose={() => setSelectedOrder(null)}
           title={`Order ${selectedOrder.id}`}
         >

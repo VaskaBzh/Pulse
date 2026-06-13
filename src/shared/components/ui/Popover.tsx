@@ -21,6 +21,7 @@ export function Popover({ trigger, content, placement = 'bottom' }: PopoverProps
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!isOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
         setIsOpen(false);
@@ -28,7 +29,7 @@ export function Popover({ trigger, content, placement = 'bottom' }: PopoverProps
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [isOpen]);
 
   const toggle = () => {
     const next = !isOpen;

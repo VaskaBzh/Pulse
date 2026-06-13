@@ -30,9 +30,9 @@ export function OrdersFilters({ onFilterChange }: OrdersFiltersProps) {
       onFilterChange(values);
     }, 300);
     return () => clearTimeout(id);
+    // onFilterChange omitted: parent stabilizes it with useCallback([])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [values.search, values.status]);
-
-  const currentStatus = watch('status');
 
   return (
     <div className="flex flex-col sm:flex-row gap-3">
@@ -50,7 +50,7 @@ export function OrdersFilters({ onFilterChange }: OrdersFiltersProps) {
             onClick={() => setValue('status', value)}
             className={clsx(
               'px-3 py-1.5 text-xs font-semibold rounded-md transition-all duration-150 whitespace-nowrap',
-              currentStatus === value
+              values.status === value
                 ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm'
                 : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200',
             )}
