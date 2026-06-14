@@ -90,7 +90,7 @@ const { data: orders, isLoading } = useQuery({
 ```
 
 `QueryClient` is configured in `src/queryClient.ts` with:
-- `staleTime: 5 * 60 * 1000` (5 minutes)
+- `staleTime: 30_000` (30 seconds)
 - `retry: 1`
 
 Replacing mock fetchers with real API calls requires changing only the `shared/api/` files.
@@ -112,7 +112,7 @@ Zod schemas used across the app:
 
 **Example (ReportsPage):**
 ```tsx
-const form = useForm<ReportExport>({
+const form = useForm<ReportExportValues>({
   resolver: zodResolver(reportExportSchema),
 });
 ```
