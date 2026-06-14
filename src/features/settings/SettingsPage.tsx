@@ -1,5 +1,6 @@
 import { clsx } from 'clsx';
 import { Moon, Sun, Clock } from 'lucide-react';
+import { useEffect } from 'react';
 import { useDashboardStore } from '../../shared/store/dashboardStore';
 import type { DateRange } from '../../shared/types';
 
@@ -20,6 +21,10 @@ const STACK = [
 ];
 
 export function SettingsPage() {
+  useEffect(() => {
+    document.title = 'Settings — Pulse';
+  }, []);
+
   const { theme, toggleTheme, dateRange, setDateRange } = useDashboardStore();
 
   const handleThemeToggle = () => {

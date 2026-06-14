@@ -2,6 +2,8 @@ import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Sidebar } from './shared/components/layout/Sidebar';
 import { TopBar } from './shared/components/layout/TopBar';
+import { ErrorBoundary } from './shared/components/ui/ErrorBoundary';
+import { PageSkeleton } from './shared/components/ui/PageSkeleton';
 import { useDashboardStore } from './shared/store/dashboardStore';
 
 const DashboardPage = lazy(() =>
@@ -37,21 +39,19 @@ function AppLayout() {
       <div className="flex flex-col flex-1 overflow-hidden">
         <TopBar />
         <main className="flex-1 overflow-y-auto">
-          <Suspense
-            fallback={
-              <div className="flex items-center justify-center h-full text-slate-400">Loading…</div>
-            }
-          >
-            <Routes>
-              <Route path="/" element={<DashboardPage />} />
-              <Route path="/analytics" element={<AnalyticsPage />} />
-              <Route path="/orders" element={<OrdersPage />} />
-              <Route path="/customers" element={<CustomersPage />} />
-              <Route path="/products" element={<ProductsPage />} />
-              <Route path="/reports" element={<ReportsPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-            </Routes>
-          </Suspense>
+          <ErrorBoundary>
+            <Suspense fallback={<PageSkeleton />}>
+              <Routes>
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="/analytics" element={<AnalyticsPage />} />
+                <Route path="/orders" element={<OrdersPage />} />
+                <Route path="/customers" element={<CustomersPage />} />
+                <Route path="/products" element={<ProductsPage />} />
+                <Route path="/reports" element={<ReportsPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+              </Routes>
+            </Suspense>
+          </ErrorBoundary>
         </main>
       </div>
     </div>

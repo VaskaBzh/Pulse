@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { clsx } from 'clsx';
 import { Users, DollarSign, UserPlus } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { CustomersTable } from './components/CustomersTable';
 import { fetchCustomers } from '../../shared/api';
 import { useDashboardStore } from '../../shared/store/dashboardStore';
@@ -22,6 +22,10 @@ function SkeletonKPI() {
 }
 
 export function CustomersPage() {
+  useEffect(() => {
+    document.title = 'Customers — Pulse';
+  }, []);
+
   const [segment, setSegment] = useState<SegmentFilter>('All');
   const dateRange = useDashboardStore((s) => s.dateRange);
 

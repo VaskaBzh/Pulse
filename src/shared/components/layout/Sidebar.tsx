@@ -46,7 +46,7 @@ export function Sidebar() {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-2 py-4 space-y-0.5 overflow-hidden">
+      <nav aria-label="Main navigation" className="flex-1 px-2 py-4 space-y-0.5 overflow-hidden">
         {sidebarOpen && (
           <p className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest px-3 mb-3">
             Main Menu
@@ -107,6 +107,7 @@ export function Sidebar() {
       {/* Collapse toggle */}
       <button
         onClick={toggleSidebar}
+        aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
         className="absolute -right-3 top-[72px] w-6 h-6 rounded-full bg-slate-700 border border-slate-600 flex items-center justify-center hover:bg-indigo-600 hover:border-indigo-500 transition-colors z-20 shadow-lg"
       >
         {sidebarOpen ? (

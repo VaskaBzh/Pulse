@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
 import { clsx } from 'clsx';
 import { Download } from 'lucide-react';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { ReportPreview } from './components/ReportPreview';
 import { fetchOrders, fetchCustomers, fetchProducts } from '../../shared/api';
@@ -23,6 +23,10 @@ const PERIOD_LABELS: Record<string, string> = {
 };
 
 export function ReportsPage() {
+  useEffect(() => {
+    document.title = 'Reports — Pulse';
+  }, []);
+
   const { filteredMetrics, dateRange } = useDashboardStore();
   const { exportData } = useExport();
 
