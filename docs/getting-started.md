@@ -1,54 +1,73 @@
-[Back to README](../README.md) · [Архитектура →](architecture.md)
+[Back to README](../README.md) · [Architecture →](architecture.md)
 
-# Начало работы
+# Getting Started
 
-## Предварительные требования
+## Prerequisites
 
 - Node.js 20+
 - npm 10+
 
-## Установка и запуск
+## Installation
 
 ```bash
-# Клонируй репозиторий и установи зависимости
+git clone https://github.com/VaskaBzh/Pulse.git
+cd Pulse
 npm install
-
-# Запусти dev-сервер
-npm run dev
-# → http://localhost:5173
 ```
 
-## Все команды
+## Running the app
 
-| Команда | Описание |
-|---------|---------|
-| `npm run dev` | Dev-сервер с HMR |
-| `npm run build` | Production-сборка (`tsc -b && vite build`) |
-| `npm run preview` | Превью production-сборки |
-| `npm run lint` | ESLint + typescript-eslint |
+```bash
+npm run dev        # dev server → http://localhost:5173
+```
 
-## Как протестировать функционал
+### Production build
 
-| Действие | Что проверить |
-|----------|-------------|
-| Кликнуть **7D** | KPI-значения уменьшатся, графики покажут 7 дней |
-| Кликнуть **90D** | Графики расширятся до 3 месяцев |
-| Нажать ☀ в TopBar | Тема переключится на светлую |
-| Нажать **Export CSV** | Скачается `.csv` файл за выбранный период |
-| Нажать `‹` на сайдбаре | Сайдбар сожмётся до иконок (240px → 68px) |
-| Навести на линию графика | Кастомный tooltip с датой и значениями |
-| Навести на строку таблицы | Highlight-эффект на всю строку |
+```bash
+npm run build      # tsc -b && vite build → dist/
+npm run preview    # serve dist/ locally → http://localhost:4173
+```
 
-## Идеи для расширения
+---
 
-- **Реальный API** — заменить `mockData.ts` на fetch/SWR
-- **React Router** — роутинг для страниц Analytics, Orders, Products
-- **Дополнительные графики** — Heatmap по часам, Funnel-диаграмма
-- **Фильтры** — по категории, стране, каналу трафика
-- **localStorage persist** — Zustand persist middleware для темы
-- **Анимация чисел** — counter animation при смене периода
+## All commands
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Dev server with HMR |
+| `npm run build` | Production build |
+| `npm run preview` | Serve production build locally |
+| `npm run lint` | ESLint (max 20 warnings) |
+| `npm run format` | Prettier write |
+| `npm run format:check` | Prettier check (used in CI) |
+
+### Testing
+
+| Command | Description |
+|---------|-------------|
+| `npm test` | Vitest watch mode |
+| `npm run test:run` | Vitest single run |
+| `npm run test:ui` | Vitest interactive UI |
+| `npm run coverage` | Coverage report — thresholds: 70% lines/functions/statements, 60% branches |
+| `npm run e2e` | Playwright e2e against dev server |
+| `npm run e2e:ui` | Playwright interactive UI mode |
+| `npm run e2e:report` | Open last HTML report |
+
+---
+
+## CI Pipeline
+
+GitHub Actions runs on every push to `feature/**` and every PR to `develop` / `main`:
+
+```
+Lint → Typecheck → Unit Tests → E2E Tests
+```
+
+Deploy preview is posted as a PR comment on every PR via Vercel.
+
+---
 
 ## See Also
 
-- [Архитектура](architecture.md) — структура папок и правила зависимостей
-- [State Management](state-management.md) — как работает Zustand store
+- [Architecture](architecture.md) — project structure and dependency rules
+- [State Management](state-management.md) — Zustand store and React Query

@@ -1,188 +1,130 @@
 # Pulse — Analytics Dashboard
 
-Профессиональный SaaS-дашборд для аналитики метрик интернет-магазина / контент-платформы.
+[![CI](https://github.com/VaskaBzh/Pulse/actions/workflows/ci.yml/badge.svg)](https://github.com/VaskaBzh/Pulse/actions/workflows/ci.yml)
 
-## Стек технологий
+> SaaS-style analytics dashboard built as a portfolio project demonstrating production-grade React architecture.
 
-| Слой | Технология |
-|---|---|
-| UI-фреймворк | React 19 + TypeScript |
-| Сборщик | Vite 8 |
-| Стили | Tailwind CSS v4 (class-based dark mode) |
-| Графики | Recharts 2 |
-| Состояние | Zustand 5 |
-| Даты | date-fns |
-| Иконки | lucide-react |
-| Утилиты | clsx |
+**[Live Demo](https://pulse-jlm996fak-vasily-s-projects3.vercel.app)**
 
 ---
 
-## Быстрый старт
+## Features
 
-```bash
-# 1. Установить зависимости
-npm install
+**7 pages** connected via React Router v6:
 
-# 2. Запустить dev-сервер
-npm run dev
+| Page | What it shows |
+|------|---------------|
+| Dashboard | KPI cards, revenue/traffic/orders charts, recent orders & top products |
+| Analytics | Funnel, retention heatmap, channel breakdown |
+| Orders | Filterable/searchable table with status filter, sort, and order detail modal |
+| Customers | Segment cards and LTV metrics |
+| Products | Product catalog with revenue metrics |
+| Reports | Export form (CSV / JSON) with React Hook Form + Zod validation |
+| Settings | Profile and notification settings |
 
-# 3. Открыть в браузере
-# http://localhost:5173
-```
-
-### Production-сборка
-
-```bash
-npm run build      # tsc + Vite bundle → dist/
-npm run preview    # preview собранного dist/
-```
-
----
-
-## Что умеет приложение
-
-### Метрики (KPI-карточки)
-- **Total Revenue** — суммарная выручка за период со сравнением с предыдущим
-- **Total Orders** — количество заказов + процент изменения
-- **Active Users** — уникальные пользователи
-- **Conversion Rate** — % конверсии (заказы / сессии)
-- **Avg. Order Value** — средний чек
-- **Sessions** — общее число сессий
-- Каждая карточка содержит **sparkline** (мини-график последних 14 дней) со своим цветом
-
-### Графики
-| График | Тип | Данные |
-|---|---|---|
-| Revenue & Profit | AreaChart с gradient-fill | Ежедневная выручка + прибыль |
-| Traffic Sources | DonutChart | 5 источников трафика (%) |
-| Daily Orders | BarChart | Объём заказов per day |
-
-### Таблицы
-- **Recent Orders** — последние 10 транзакций с цветными статус-бейджами (completed / pending / cancelled / refunded)
-- **Top Products** — топ-6 продуктов по выручке с прогресс-барами и % роста
-
-### Фильтр по дате
-Кнопки в TopBar: **7D / 30D / 90D** — фильтруют все метрики и графики.
-При смене периода автоматически пересчитываются KPI-показатели и % изменения
-(текущий период сравнивается с предыдущим периодом такой же длины).
-
-### Тёмная / светлая тема
-Кнопка ☀ / 🌙 в правом верхнем углу. Состояние хранится в Zustand-сторе.
-По умолчанию — тёмная тема.
-
-### Экспорт в CSV
-Кнопка **Export CSV** — скачивает файл `pulse-analytics-<period>-<date>.csv`
-Содержит: Date, Revenue, Profit, Orders, Users, Sessions, Conv. Rate, AOV.
-
-### Сворачиваемый сайдбар
-Кнопка `‹ ›` на боковой панели — сжимает сайдбар до иконок (240px → 68px).
+**Cross-page features:**
+- Date range filter: **7D / 30D / 90D** — recalculates all KPIs with period-over-period comparison
+- Dark / light theme toggle (Tailwind v4 class strategy, default dark)
+- Collapsible sidebar (240px → 68px icon mode)
+- CSV export via `useExport` hook
 
 ---
 
-## Структура проекта
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | React 19 + TypeScript (strict mode) |
+| Build | Vite 8 |
+| Styles | Tailwind CSS v4 |
+| Charts | Recharts 3 |
+| State | Zustand 5 |
+| Data fetching | TanStack Query v5 |
+| Forms | React Hook Form v7 + Zod v4 |
+| Routing | React Router v6 |
+| Testing | Vitest 4 + React Testing Library + Playwright |
+| Icons | lucide-react |
+| Utilities | clsx, date-fns |
+
+---
+
+## Project Structure
 
 ```
 src/
-├── types/
-│   └── index.ts              — TypeScript-интерфейсы (DailyMetric, Order, Product…)
-├── data/
-│   └── mockData.ts           — Генератор 90 дней реалистичных данных
-├── store/
-│   └── dashboardStore.ts     — Zustand-стор (тема, фильтр, вычисленные метрики)
-├── hooks/
-│   └── useExport.ts          — Хук для экспорта CSV
-├── components/
-│   ├── layout/
-│   │   ├── Sidebar.tsx       — Навигационная панель
-│   │   └── TopBar.tsx        — Верхняя панель (фильтры, экспорт, тема)
-│   ├── ui/
-│   │   └── KPICard.tsx       — Карточка метрики со sparkline
-│   ├── charts/
-│   │   ├── RevenueAreaChart.tsx   — AreaChart Revenue + Profit
-│   │   ├── TrafficDonutChart.tsx  — DonutChart источников трафика
-│   │   └── OrdersBarChart.tsx     — BarChart Daily Orders
-│   └── tables/
-│       ├── RecentOrdersTable.tsx  — Таблица последних заказов
-│       └── TopProductsTable.tsx   — Топ-продукты с прогресс-барами
-├── pages/
-│   └── Dashboard.tsx         — Главная страница (компоновка всех блоков)
-├── App.tsx                   — Root: Layout + синхронизация темы с DOM
-├── main.tsx                  — Entry point, инициализация dark-класса
-└── index.css                 — Tailwind v4 + @custom-variant dark
+├── features/                   — one directory per page
+│   ├── analytics/
+│   ├── customers/
+│   ├── dashboard/
+│   ├── orders/
+│   ├── products/
+│   ├── reports/
+│   └── settings/
+├── shared/                     — cross-feature code only
+│   ├── api/                    — React Query fetchers (mock API layer)
+│   ├── components/
+│   │   ├── layout/             — Sidebar, TopBar
+│   │   └── ui/                 — KPICard, Modal, Popover
+│   ├── hooks/                  — useExport
+│   ├── lib/                    — Zod validation schemas
+│   ├── store/                  — dashboardStore (Zustand)
+│   └── types/                  — shared TypeScript interfaces
+├── App.tsx
+└── main.tsx
 ```
 
+**Rule:** features can import from `shared/`, but never from each other.
+
 ---
 
-## Как работает архитектура
+## Getting Started
 
-### Состояние (Zustand)
-
-```typescript
-// store/dashboardStore.ts
-const store = {
-  theme: 'dark',            // светлая / тёмная тема
-  dateRange: '30d',         // активный фильтр периода
-
-  // Вычисляемые поля (пересчитываются при смене dateRange):
-  filteredMetrics: [...],   // срез allMetrics за выбранный период
-  summaryStats: { ... },    // KPI с % изменением vs предыдущий период
-}
+```bash
+npm install
+npm run dev        # http://localhost:5173
 ```
 
-При вызове `setDateRange('7d')` стор срезает данные и пересчитывает все статистики —
-компоненты подписываются напрямую на `filteredMetrics` и `summaryStats` и re-render'ятся автоматически.
+### All commands
 
-### Данные
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Dev server with HMR |
+| `npm run build` | Production build (`tsc -b && vite build`) |
+| `npm run preview` | Serve production build locally |
+| `npm run lint` | ESLint |
+| `npm run format` | Prettier |
+| `npm test` | Vitest watch mode |
+| `npm run coverage` | Coverage report (threshold: 70%) |
+| `npm run e2e` | Playwright e2e tests (Chromium) |
+| `npm run e2e:ui` | Playwright interactive UI mode |
+| `npm run e2e:report` | Open last HTML report |
 
-`generateDailyMetrics(90)` создаёт 90 дней синтетических данных с:
-- Детерминированным псевдослучайным числом (sin-seed) — одинаковые данные при каждом запуске
-- Недельной сезонностью (+28% в выходные дни)
-- Восходящим трендом роста (+0.25%/день)
+---
 
-### Dark mode (Tailwind v4)
+## Testing
 
-```css
-/* index.css */
-@custom-variant dark (&:where(.dark, .dark *));
+**97 unit tests** across store, validation schemas, hooks, and UI components:
+
+```bash
+npm run coverage
 ```
 
-Класс `dark` ставится на `<html>` через Zustand-экшен `toggleTheme()` —
-все дочерние элементы реагируют на `dark:` утилиты Tailwind.
+**11 e2e tests** covering dashboard golden path and orders critical scenarios:
+
+```bash
+npm run e2e
+```
+
+CI runs lint → typecheck → unit tests → e2e on every push and pull request.
 
 ---
 
-## Как тестировать функционал
+## Docs
 
-| Действие | Что проверить |
-|---|---|
-| Кликнуть **7D** | KPI-значения уменьшатся, графики покажут 7 дней |
-| Кликнуть **90D** | Графики расширятся до 3 месяцев с прореженными тиками |
-| Нажать ☀ в TopBar | Тема переключится на светлую (светлый фон + серый сайдбар) |
-| Нажать **Export CSV** | Скачается .csv файл с данными за выбранный период |
-| Нажать `‹` на сайдбаре | Сайдбар сожмётся до иконок, наведение покажет tooltip |
-| Навести на линию графика | Кастомный tooltip с датой и значениями Revenue / Profit |
-| Навести на бар в Orders | Tooltip с количеством заказов за день |
-| Кликнуть по секции Donut | Tooltip с процентом источника трафика |
-| Навести на строку таблицы | Highlight-эффект на всю строку |
-
----
-
-## Расширение (идеи для следующего шага)
-
-- **Реальный API** — заменить `mockData.ts` на fetch/SWR-запросы
-- **React Router** — роутинг для страниц Analytics, Orders, Products
-- **Дополнительные графики** — Heatmap по часам, Funnel-диаграмма
-- **Фильтры** — по категории, стране, каналу трафика
-- **localStorage persist** — сохранять тему через Zustand persist middleware
-- **Анимация чисел** — counter animation при смене периода
-
----
-
-## Документация
-
-| Раздел | Описание |
-|--------|---------|
-| [Начало работы](docs/getting-started.md) | Установка, запуск, тестирование функционала |
-| [Архитектура](docs/architecture.md) | Структура проекта, Structured Modules, правила зависимостей |
-| [Компоненты](docs/components.md) | KPICard, графики, таблицы, layout |
-| [State Management](docs/state-management.md) | Zustand store, селекторы, типы данных |
+| Section | Description |
+|---------|-------------|
+| [Getting Started](docs/getting-started.md) | Prerequisites, all commands, testing guide |
+| [Architecture](docs/architecture.md) | Feature-based structure, dependency rules |
+| [Components](docs/components.md) | KPICard, charts, tables, layout, Modal, Popover |
+| [State Management](docs/state-management.md) | Zustand store, React Query, forms |
+| [Git Workflow](docs/git-workflow.md) | Git flow, conventional commits, CI triggers |

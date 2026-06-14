@@ -1,28 +1,28 @@
-[← Компоненты](components.md) · [Back to README](../README.md)
+[← Components](components.md) · [Back to README](../README.md) · [Git Workflow →](git-workflow.md)
 
 # State Management
 
-Zustand v5 — единый store для всего приложения.
+---
 
-## Store: `dashboardStore`
+## Zustand Store
 
-Файл: `src/store/dashboardStore.ts`
+File: `src/shared/store/dashboardStore.ts`
 
-### Структура
+### Structure
 
 ```typescript
 interface DashboardStore {
-  // Состояние UI
-  theme: Theme;            // 'light' | 'dark'
-  sidebarOpen: boolean;    // развёрнут ли сайдбар
-  activePage: string;      // активная страница навигации
-  dateRange: DateRange;    // '7d' | '30d' | '90d'
+  // UI state
+  theme: Theme;             // 'light' | 'dark'
+  sidebarOpen: boolean;
+  activePage: string;
+  dateRange: DateRange;     // '7d' | '30d' | '90d'
 
-  // Вычисляемые данные (пересчитываются при смене dateRange)
-  filteredMetrics: DailyMetric[];  // срез allMetrics за выбранный период
-  summaryStats: SummaryStats;      // KPI с % изменением vs предыдущий период
+  // Derived data (recomputed on every setDateRange call)
+  filteredMetrics: DailyMetric[];
+  summaryStats: SummaryStats;
 
-  // Экшены
+  // Actions
   toggleTheme: () => void;
   setDateRange: (range: DateRange) => void;
   toggleSidebar: () => void;
@@ -30,33 +30,30 @@ interface DashboardStore {
 }
 ```
 
-### Как работает фильтрация
+### How filtering works
 
-При вызове `setDateRange('7d')`:
+When `setDateRange('7d')` is called:
 
 ```
-allMetrics (90 дней)
-  ├── current = последние 7 дней
-  └── prev = предыдущие 7 дней
+allMetrics (90 days)
+  ├── current = last 7 days
+  └── prev    = previous 7 days
 
 summaryStats = computeStats(current, prev)
   → revenue.change = ((current - prev) / prev) * 100
 ```
 
-Компоненты подписываются на `filteredMetrics` и `summaryStats` — ре-рендер происходит автоматически.
+Components subscribed to `filteredMetrics` or `summaryStats` re-render automatically.
 
-## Паттерны использования
+### Usage patterns
 
-### Гранулярный селектор (рекомендуется)
-
+**Granular selector (recommended):**
 ```tsx
-// Компонент перерендерится только при изменении filteredMetrics
 const filteredMetrics = useDashboardStore((s) => s.filteredMetrics);
-const summaryStats = useDashboardStore((s) => s.summaryStats);
+const summaryStats    = useDashboardStore((s) => s.summaryStats);
 ```
 
-### Несколько полей (shallow)
-
+**Multiple fields (shallow):**
 ```tsx
 import { useShallow } from 'zustand/react/shallow';
 
@@ -65,64 +62,113 @@ const { theme, toggleTheme } = useDashboardStore(
 );
 ```
 
-### Экшен без подписки на состояние
-
+**Action without subscribing to state:**
 ```tsx
-// Компонент не будет ре-рендерится при изменении store
 const setDateRange = useDashboardStore((s) => s.setDateRange);
 ```
 
-### Что не делать
-
+**Avoid:**
 ```tsx
-// ❌ Подписка на весь store — лишние ре-рендеры при любом изменении
+// ❌ Subscribes to entire store — re-renders on any change
 const store = useDashboardStore();
-
-// ❌ Вычисления в компоненте — они уже в store
-const filtered = store.allMetrics.filter(...);
 ```
 
-## Данные: `mockData.ts`
+---
 
-Файл: `src/data/mockData.ts`
+## React Query
 
-| Экспорт | Тип | Описание |
-|---------|-----|---------|
-| `allMetrics` | `DailyMetric[]` | 90 дней ежедневных метрик |
-| `recentOrders` | `Order[]` | Последние заказы |
-| `topProducts` | `Product[]` | Топ-продукты |
-| `trafficSources` | `TrafficSource[]` | Источники трафика (статичные) |
+File: `src/shared/api/`
 
-### Генерация данных
+Each page fetches its data via TanStack Query v5. The mock API layer (`shared/api/*.ts`) simulates network delay (200–400ms random) so loading states are visible.
 
-`allMetrics` генерируется детерминированно:
-- **Seed**: `sin(i) * 10000 - Math.floor(sin(i) * 10000)` — одинаковые данные каждый раз
-- **Сезонность**: +28% в выходные дни
-- **Тренд**: +0.25%/день роста выручки
+**Example (OrdersPage):**
+```tsx
+const { data: orders, isLoading } = useQuery({
+  queryKey: ['orders'],
+  queryFn: fetchOrders,
+});
+```
 
-## Типы: `src/types/index.ts`
+`QueryClient` is configured in `src/queryClient.ts` with:
+- `staleTime: 30_000` (30 seconds)
+- `retry: 1`
 
-| Тип | Описание |
-|-----|---------|
-| `DailyMetric` | Ежедневные метрики (revenue, orders, users, sessions…) |
-| `SummaryStats` | KPI-объект с current/prev/change для каждой метрики |
-| `Order` | Заказ с customer, amount, status, date, country |
-| `Product` | Продукт с name, category, revenue, orders, growth |
-| `TrafficSource` | Источник трафика с name, value, color |
+Replacing mock fetchers with real API calls requires changing only the `shared/api/` files.
+
+---
+
+## Forms (React Hook Form + Zod)
+
+File: `src/shared/lib/validation.ts`
+
+Zod schemas used across the app:
+
+| Schema | Used in |
+|--------|---------|
+| `dateRangeSchema` | DateRange type guard |
+| `orderStatusSchema` | Orders status filter |
+| `ordersFilterSchema` | OrdersFilters form |
+| `reportExportSchema` | ReportsPage export form |
+
+**Example (ReportsPage):**
+```tsx
+const form = useForm<ReportExportValues>({
+  resolver: zodResolver(reportExportSchema),
+});
+```
+
+---
+
+## Mock Data
+
+File: `src/shared/data/mockData.ts`
+
+| Export | Type | Description |
+|--------|------|-------------|
+| `allMetrics` | `DailyMetric[]` | 90 days of daily metrics |
+| `recentOrders` | `Order[]` | Recent order transactions |
+| `topProducts` | `Product[]` | Top products by revenue |
+| `trafficSources` | `TrafficSource[]` | Static traffic source breakdown |
+
+`allMetrics` is generated deterministically:
+- **Seed**: `sin(i) * 10000 − Math.floor(sin(i) * 10000)` — same values on every run
+- **Seasonality**: +28% on weekends
+- **Trend**: +0.25%/day revenue growth
+
+---
+
+## Export Hook
+
+File: `src/shared/hooks/useExport.ts`
+
+```tsx
+const { exportData } = useExport();
+
+exportData('csv');   // downloads pulse-analytics-<period>-<date>.csv
+exportData('json');  // downloads pulse-analytics-<period>-<date>.json
+```
+
+CSV fields: Date, Revenue, Profit, Orders, Users, Sessions, Conv. Rate, AOV.
+
+---
+
+## Types
+
+File: `src/shared/types/index.ts`
+
+| Type | Description |
+|------|-------------|
+| `DailyMetric` | Daily metrics (revenue, profit, orders, users, sessions…) |
+| `SummaryStats` | KPI object with current/prev/change per metric |
+| `Order` | Order with customer, amount, status, date, country |
+| `Product` | Product with name, category, revenue, orders, growth |
+| `TrafficSource` | Traffic source with name, value, color |
 | `DateRange` | `'7d' \| '30d' \| '90d'` |
 | `Theme` | `'light' \| 'dark'` |
 
-## Хук useExport
-
-Файл: `src/hooks/useExport.ts`
-
-```tsx
-const { exportCSV } = useExport();
-// Скачивает pulse-analytics-<period>-<date>.csv
-// Содержит: Date, Revenue, Profit, Orders, Users, Sessions, ConvRate, AOV
-```
+---
 
 ## See Also
 
-- [Компоненты](components.md) — как компоненты подписываются на store
-- [Начало работы](getting-started.md) — запуск и тестирование
+- [Components](components.md) — how components subscribe to the store
+- [Architecture](architecture.md) — layer structure and dependency rules

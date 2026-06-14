@@ -29,7 +29,15 @@ dist-ssr
 .ai-factory.json
 skills-lock.json
 screenshot-check/
+.mcp.json
+AGENTS.md
+
+# Vercel
+.vercel/
 
 # Playwright / тестовые артефакты
 playwright-report/
 test-results/
+
+# Vitest coverage
+coverage/
