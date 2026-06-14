@@ -1,4 +1,5 @@
 import { DollarSign, ShoppingCart, Users, TrendingUp, CreditCard, Activity } from 'lucide-react';
+import { useEffect } from 'react';
 import { OrdersBarChart } from './components/charts/OrdersBarChart';
 import { RevenueAreaChart } from './components/charts/RevenueAreaChart';
 import { TrafficDonutChart } from './components/charts/TrafficDonutChart';
@@ -8,7 +9,12 @@ import { KPICard } from '../../shared/components/ui/KPICard';
 import { useDashboardStore } from '../../shared/store/dashboardStore';
 
 export function Dashboard() {
-  const { summaryStats, filteredMetrics } = useDashboardStore();
+  const summaryStats = useDashboardStore((s) => s.summaryStats);
+  const filteredMetrics = useDashboardStore((s) => s.filteredMetrics);
+
+  useEffect(() => {
+    document.title = 'Dashboard — Pulse';
+  }, []);
 
   const spark = (
     key:
