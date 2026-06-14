@@ -1,116 +1,154 @@
-[← Архитектура](architecture.md) · [Back to README](../README.md) · [State Management →](state-management.md)
+[← Architecture](architecture.md) · [Back to README](../README.md) · [State Management →](state-management.md)
 
-# Компоненты
-
-## Layout
-
-### Sidebar (`components/layout/Sidebar.tsx`)
-
-Боковая навигационная панель с коллапсом.
-
-- Ширина: 240px (развёрнут) / 68px (свёрнут)
-- Кнопка `‹ ›` переключает `sidebarOpen` в store
-- В свёрнутом виде показывает иконки + tooltip при наведении
-- Активная страница подсвечивается через `activePage` из store
-
-### TopBar (`components/layout/TopBar.tsx`)
-
-Верхняя панель с управлением.
-
-- Переключатель периода: **7D / 30D / 90D** → вызывает `setDateRange()`
-- Кнопка темы: ☀ / 🌙 → вызывает `toggleTheme()`
-- Кнопка **Export CSV** → вызывает `useExport()`
+# Components
 
 ---
 
-## UI
+## Layout (`shared/components/layout/`)
 
-### KPICard (`components/ui/KPICard.tsx`)
+### Sidebar
 
-Карточка ключевой метрики.
+Navigation panel with collapse support.
+
+- Width: 240px (expanded) / 68px (collapsed)
+- Toggle button `‹ ›` calls `toggleSidebar()` in the store
+- Collapsed state shows icons + tooltip on hover
+- Active page highlighted via `activePage` from store
+
+### TopBar
+
+Top control bar.
+
+- Period switcher **7D / 30D / 90D** → calls `setDateRange()`
+- Theme toggle ☀ / 🌙 → calls `toggleTheme()`
+- **Export CSV** button → calls `useExport()`
+
+---
+
+## UI (`shared/components/ui/`)
+
+### KPICard
+
+Metric card with sparkline and period comparison.
 
 **Props:**
 
-| Prop | Тип | Описание |
-|------|-----|---------|
-| `title` | `string` | Название метрики |
-| `value` | `string` | Форматированное значение |
-| `change` | `number` | % изменение (+ зелёный, − красный) |
-| `sparklineData` | `number[]` | Последние 14 значений для мини-графика |
-| `icon` | `ReactNode` | Иконка из lucide-react |
-| `color` | `string` | HEX-цвет акцента |
+| Prop | Type | Description |
+|------|------|-------------|
+| `title` | `string` | Metric label |
+| `value` | `string` | Formatted value |
+| `change` | `number` | % change — positive → green, negative → red |
+| `sparklineData` | `number[]` | Last 14 values for the mini chart |
+| `icon` | `ReactNode` | Icon from lucide-react |
+| `color` | `string` | HEX accent color |
 
-Sparkline рисуется через Recharts `<LineChart>` без осей.
+Sparkline is a Recharts `<LineChart>` with no axes.
+
+### Modal
+
+Accessible dialog with focus trap and Escape key close.
+
+**Props:**
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `isOpen` | `boolean` | Controls visibility |
+| `onClose` | `() => void` | Close handler |
+| `title` | `string` | Dialog title |
+| `children` | `ReactNode` | Dialog content |
+
+- Sets `document.body.style.overflow = 'hidden'` when open
+- `role="dialog"`, `aria-labelledby` for accessibility
+- Keyboard: Escape closes the modal
+
+### Popover
+
+Toggleable floating panel.
+
+**Props:**
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `trigger` | `ReactNode` | Element that opens the popover |
+| `children` | `ReactNode` | Popover content |
+| `placement` | `'top' \| 'bottom' \| 'left' \| 'right'` | Position relative to trigger |
+
+- Click outside closes the popover
+- Cleans up event listeners on unmount
 
 ---
 
-## Графики (`components/charts/`)
+## Charts (`features/dashboard/components/charts/`)
 
-Все графики используют Recharts `<ResponsiveContainer width="100%" height={N}>`.
+All charts use Recharts `<ResponsiveContainer width="100%" height={N}>`.
 
 ### RevenueAreaChart
 
-- Тип: `AreaChart` с gradient-fill
-- Данные: `filteredMetrics` → поля `revenue` и `profit`
-- Два ряда: Revenue (indigo `#6366f1`) и Profit (emerald `#10b981`)
-- Кастомный tooltip с датой и значениями
-- Ось Y форматируется как `$Xk`
+- Type: `AreaChart` with gradient fill
+- Data: `filteredMetrics` → `revenue` and `profit` fields
+- Two series: Revenue (indigo `#6366f1`) and Profit (emerald `#10b981`)
+- Custom tooltip showing date and formatted values
+- Y-axis formatted as `$Xk`
 
 ### OrdersBarChart
 
-- Тип: `BarChart`, `barSize={6}`, `radius={[3,3,0,0]}`
-- Данные: `filteredMetrics` → поле `orders`
-- Цвет: emerald `#10b981`
+- Type: `BarChart`, `barSize={6}`, `radius={[3,3,0,0]}`
+- Data: `filteredMetrics` → `orders` field
+- Color: emerald `#10b981`
 
 ### TrafficDonutChart
 
-- Тип: `PieChart` с `innerRadius` (donut)
-- Данные: `trafficSources` из `mockData.ts` (статичные)
-- 5 источников: Organic, Direct, Referral, Social, Email
-- Кастомная легенда сбоку с цветными dot-маркерами
+- Type: `PieChart` with `innerRadius` (donut)
+- Data: `trafficSources` from `mockData.ts` (static)
+- 5 sources: Organic, Direct, Referral, Social, Email
+- Custom legend with color dot markers
 
 ---
 
-## Таблицы (`components/tables/`)
+## Tables (`features/dashboard/components/tables/`)
 
 ### RecentOrdersTable
 
-Последние 10 заказов из `recentOrders` (mockData).
+Last 10 orders from `recentOrders` (mockData).
 
-**Колонки:** ID, Customer, Product, Amount, Status, Date, Country
+**Columns:** ID, Customer, Product, Amount, Status, Date, Country
 
-**Статусы с цветами:**
+**Status badge colors:**
 
-| Статус | Цвет |
-|--------|------|
-| `completed` | зелёный |
-| `pending` | жёлтый |
-| `cancelled` | красный |
-| `refunded` | серый |
+| Status | Color |
+|--------|-------|
+| `completed` | green |
+| `pending` | yellow |
+| `cancelled` | red |
+| `refunded` | gray |
 
 ### TopProductsTable
 
-Топ-6 продуктов по выручке из `topProducts` (mockData).
+Top 6 products by revenue from `topProducts` (mockData).
 
-**Колонки:** Product, Category, Revenue (прогресс-бар), Orders, Growth (%)
+**Columns:** Product, Category, Revenue (progress bar), Orders, Growth (%)
 
 ---
 
-## Как добавить новый компонент
+## Adding a new component
 
-1. Создай файл в нужной директории (`components/ui/`, `components/charts/` и т.д.)
-2. Используй именованный экспорт: `export function MyComponent() {}`
-3. Читай данные из store через гранулярный селектор:
+1. Place the file in the appropriate directory:
+   - Reusable primitive → `shared/components/ui/`
+   - Page-specific → `features/<page>/components/`
+2. Use named export: `export function MyComponent() {}`
+3. Read store data with a granular selector:
    ```tsx
    const data = useDashboardStore((s) => s.filteredMetrics);
    ```
-4. Используй `clsx` для условных классов:
+4. Use `clsx` for conditional classes:
    ```tsx
    import clsx from 'clsx';
    className={clsx('base-class', condition && 'conditional-class')}
    ```
 
+---
+
 ## See Also
 
-- [State Management](state-management.md) — как компоненты читают данные из store
-- [Архитектура](architecture.md) — правила зависимостей между слоями
+- [State Management](state-management.md) — how components read from the store
+- [Architecture](architecture.md) — dependency rules between layers

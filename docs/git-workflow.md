@@ -2,126 +2,89 @@
 
 # Git Workflow
 
-Соглашения по работе с git в проекте Pulse Dashboard.
-
 ---
 
 ## Git Flow
 
-Проект использует упрощённую модель Git Flow:
-
 ```
-main         ← production-ready (защищённая ветка)
-develop      ← интеграционная ветка, default target для PR
-feature/*    ← новые фичи (ответвляются от develop)
-fix/*        ← баг-фиксы
-release/*    ← подготовка релиза (develop → main)
+main         ← production-ready (protected)
+develop      ← integration branch, default PR target
+feature/*    ← new features (branch from develop)
+fix/*        ← bug fixes
+release/*    ← release preparation (develop → main)
 ```
 
-### Жизненный цикл фичи
+### Feature lifecycle
 
 ```bash
-# 1. Начать новую фичу от develop
-git checkout develop
-git pull origin develop
+# 1. Start from develop
+git checkout develop && git pull
 git checkout -b feature/orders-table
 
-# 2. Работать, коммитить (conventional commits)
+# 2. Commit with conventional commits
 git add src/features/orders/
-git commit -m "feat(orders): add sortable orders table with pagination"
+git commit -m "feat(orders): add sortable table with status filter"
 
-# 3. Пушить и открывать PR в develop
+# 3. Push and open PR targeting develop
 git push -u origin feature/orders-table
-# → GitHub: открыть PR feature/orders-table → develop
 
-# 4. После merge — удалить ветку локально
+# 4. After merge — delete the branch
 git branch -d feature/orders-table
 ```
 
-### Именование веток
+### Branch naming
 
-| Префикс | Назначение | Пример |
-|---------|-----------|--------|
-| `feature/` | Новая функциональность | `feature/analytics-heatmap` |
-| `fix/` | Исправление бага | `fix/kpi-card-overflow` |
-| `refactor/` | Рефакторинг | `refactor/zustand-selectors` |
-| `chore/` | Инфраструктура, зависимости | `chore/upgrade-recharts-v3` |
-| `docs/` | Документация | `docs/architecture-update` |
-| `release/` | Подготовка релиза | `release/1.0.0` |
+| Prefix | Purpose | Example |
+|--------|---------|---------|
+| `feature/` | New functionality | `feature/analytics-heatmap` |
+| `fix/` | Bug fix | `fix/kpi-card-overflow` |
+| `refactor/` | Refactoring | `refactor/zustand-selectors` |
+| `chore/` | Deps, infrastructure | `chore/upgrade-recharts` |
+| `docs/` | Documentation | `docs/architecture-update` |
+| `release/` | Release prep | `release/1.0.0` |
 
 ---
 
 ## Conventional Commits
 
-Все коммиты должны следовать формату [Conventional Commits](https://www.conventionalcommits.org/):
+Format: `<type>(<scope>): <description>`
+
+### Types
+
+| Type | When to use |
+|------|------------|
+| `feat` | New feature |
+| `fix` | Bug fix |
+| `refactor` | Refactor without behavior change |
+| `test` | Add or change tests |
+| `docs` | Documentation |
+| `chore` | Deps, config, infrastructure |
+| `ci` | CI/CD changes |
+| `style` | Formatting only |
+| `perf` | Performance improvement |
+
+### Scopes
+
+Named after the feature or area:
 
 ```
-<type>(<scope>): <description>
-
-[optional body]
-
-[optional footer]
+feat(dashboard):   ...
+feat(orders):      ...
+fix(charts):       ...
+refactor(store):   ...
+ci(github):        ...
 ```
 
-### Типы коммитов
+### Rules
 
-| Тип | Когда использовать |
-|-----|-------------------|
-| `feat` | Новая функциональность |
-| `fix` | Исправление бага |
-| `refactor` | Рефакторинг без изменения поведения |
-| `test` | Добавление или изменение тестов |
-| `docs` | Документация |
-| `chore` | Зависимости, конфигурация, инфраструктура |
-| `ci` | CI/CD изменения |
-| `style` | Форматирование кода (без изменения логики) |
-| `perf` | Улучшение производительности |
+- Lowercase description, no trailing period
+- Imperative mood: "add" not "added" / "adds"
+- First line max 72 characters
+- Empty line between subject and body
 
-### Скоупы (scope)
+### Validation
 
-Скоуп — название фичи или области кода:
-
-```
-feat(dashboard): ...
-feat(orders): ...
-fix(charts): ...
-refactor(store): ...
-docs(git): ...
-chore(deps): ...
-```
-
-### Примеры
-
-```bash
-# Новая функциональность
-git commit -m "feat(analytics): add revenue trend with period comparison"
-git commit -m "feat(orders): add sortable table with status filter"
-
-# Баг-фикс
-git commit -m "fix(store): correct percentage calculation for previous period"
-git commit -m "fix(sidebar): prevent icon overflow when collapsed"
-
-# Рефакторинг
-git commit -m "refactor(charts): extract CustomTooltip to shared component"
-
-# Зависимости / инфраструктура
-git commit -m "chore(deps): upgrade recharts to v3.8"
-git commit -m "chore(git): setup commitlint and husky hooks"
-
-# Документация
-git commit -m "docs(architecture): update structured modules diagram"
-```
-
-### Правила
-
-- Описание в нижнем регистре, без точки в конце
-- Императивный стиль: "add", не "added" / "adds"
-- Не более 72 символов в первой строке
-- Пустая строка между заголовком и телом коммита
-
-### Валидация
-
-Husky автоматически проверяет формат коммитов через `commit-msg` хук. Неправильный коммит будет отклонён:
+Husky validates commit format via the `commit-msg` hook. Non-conforming commits are rejected:
 
 ```bash
 $ git commit -m "updated stuff"
@@ -131,62 +94,16 @@ $ git commit -m "updated stuff"
 
 ---
 
-## GitHub MCP
+## CI Triggers
 
-В проекте настроен MCP-сервер `github` (`.mcp.json`), который позволяет AI-агентам работать с репозиторием `VaskaBzh/Pulse` напрямую.
-
-### Доступные операции
-
-| MCP-инструмент | Что делает |
-|---------------|-----------|
-| `mcp__github__create_branch` | Создать ветку |
-| `mcp__github__create_pull_request` | Открыть PR |
-| `mcp__github__get_pull_request` | Получить информацию о PR |
-| `mcp__github__list_pull_requests` | Список открытых PR |
-| `mcp__github__create_issue` | Создать issue |
-| `mcp__github__list_issues` | Список issues |
-| `mcp__github__get_file_contents` | Прочитать файл из репозитория |
-| `mcp__github__push_files` | Запушить файлы |
-| `mcp__github__search_code` | Поиск по коду |
-
-### Настройка токена
-
-MCP github сервер использует переменную окружения `GITHUB_TOKEN`. Токен должен иметь scope `repo`.
-
-```json
-// .mcp.json
-{
-  "mcpServers": {
-    "github": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-github"],
-      "env": {
-        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
-      }
-    }
-  }
-}
-```
-
-Установить токен в окружении (добавить в `.env.local` или shell profile):
-
-```bash
-export GITHUB_TOKEN=ghp_your_token_here
-```
-
-### Пример использования
-
-Когда AI-агент (Claude Code) выполняет задачи, он может использовать MCP для:
-
-1. Создания PR после завершения feature-ветки
-2. Проверки статуса CI
-3. Просмотра комментариев к PR
-4. Создания issues для отслеживания задач
+| Event | Workflows triggered |
+|-------|-------------------|
+| Push to `feature/**`, `fix/**`, `release/**` | CI (lint → typecheck → unit → e2e) |
+| PR to `develop` or `main` | CI + Deploy Preview (Vercel) |
 
 ---
 
 ## See Also
 
-- [Архитектура](architecture.md) — структура проекта и правила зависимостей
-- [Начало работы](getting-started.md) — установка и запуск
-- [State Management](state-management.md) — Zustand store
+- [Architecture](architecture.md) — project structure
+- [Getting Started](getting-started.md) — running the project locally

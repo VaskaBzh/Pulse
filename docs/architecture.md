@@ -1,81 +1,121 @@
-[← Начало работы](getting-started.md) · [Back to README](../README.md) · [Компоненты →](components.md)
+[← Getting Started](getting-started.md) · [Back to README](../README.md) · [Components →](components.md)
 
-# Архитектура
+# Architecture
 
-Паттерн: **Structured Modules (по feature)**. Подробное описание — `.ai-factory/ARCHITECTURE.md`.
+Pattern: **Feature-based modules** (`src/features/` + `src/shared/`).
 
-## Текущая структура
+---
 
-```
-src/
-├── components/
-│   ├── layout/          # Sidebar, TopBar — переиспользуемый layout
-│   ├── ui/              # KPICard и другие базовые компоненты
-│   ├── charts/          # RevenueAreaChart, OrdersBarChart, TrafficDonutChart
-│   └── tables/          # RecentOrdersTable, TopProductsTable
-├── pages/
-│   └── Dashboard.tsx    # Страница дашборда — компоновка блоков
-├── store/
-│   └── dashboardStore.ts # Zustand store: тема, период, метрики
-├── hooks/
-│   └── useExport.ts      # Хук экспорта CSV
-├── data/
-│   └── mockData.ts       # 90 дней синтетических данных
-├── types/
-│   └── index.ts          # Централизованные TypeScript типы
-├── App.tsx               # Root: layout + синхронизация темы с DOM
-└── main.tsx              # Entry point
-```
-
-## Целевая структура (при росте проекта)
+## Directory Structure
 
 ```
 src/
-├── features/
-│   ├── dashboard/        # Всё, что относится к дашборду
-│   │   ├── components/   # charts/, tables/
-│   │   ├── store/        # dashboardStore.ts
-│   │   ├── hooks/        # useExport.ts
-│   │   ├── Dashboard.tsx
-│   │   └── index.ts      # export { Dashboard }
-│   └── analytics/        # Будущий модуль (пример)
-├── shared/
-│   ├── components/       # layout/, ui/
-│   ├── data/             # mockData.ts
-│   └── types/            # index.ts
-├── App.tsx
-└── main.tsx
+├── features/                        — one directory per route/page
+│   ├── analytics/
+│   │   ├── components/              — page-specific components
+│   │   └── AnalyticsPage.tsx
+│   ├── customers/
+│   │   ├── components/
+│   │   └── CustomersPage.tsx
+│   ├── dashboard/
+│   │   ├── components/
+│   │   │   ├── charts/              — RevenueAreaChart, TrafficDonutChart, OrdersBarChart
+│   │   │   └── tables/              — RecentOrdersTable, TopProductsTable
+│   │   └── DashboardPage.tsx
+│   ├── orders/
+│   │   ├── components/              — OrdersTable, OrdersFilters, OrderDetailModal
+│   │   └── OrdersPage.tsx
+│   ├── products/
+│   │   ├── components/
+│   │   └── ProductsPage.tsx
+│   ├── reports/
+│   │   ├── components/
+│   │   └── ReportsPage.tsx
+│   └── settings/
+│       ├── components/
+│       └── SettingsPage.tsx
+├── shared/                          — cross-feature code only
+│   ├── api/                         — React Query fetchers (mock API layer)
+│   │   ├── metrics.ts
+│   │   ├── orders.ts
+│   │   ├── customers.ts
+│   │   └── products.ts
+│   ├── components/
+│   │   ├── layout/                  — Sidebar, TopBar (app shell)
+│   │   └── ui/                      — KPICard, Modal, Popover
+│   ├── data/
+│   │   └── mockData.ts              — deterministic 90-day data generator
+│   ├── hooks/
+│   │   └── useExport.ts             — CSV/JSON export hook
+│   ├── lib/
+│   │   └── validation.ts            — Zod schemas (dateRange, orderStatus, filters)
+│   ├── store/
+│   │   └── dashboardStore.ts        — Zustand store (theme, dateRange, computed stats)
+│   └── types/
+│       └── index.ts                 — shared TypeScript interfaces
+├── App.tsx                          — router + layout shell
+└── main.tsx                         — entry point, dark class init
 ```
 
-> Миграция не нужна прямо сейчас — текущая структура оптимальна для одного модуля.
+---
 
-## Правила зависимостей
+## Dependency Rules
 
 ```
-features/X/  →  shared/          ✅ Можно
-features/X/  →  features/Y/      ❌ Нельзя
-shared/      →  features/X/      ❌ Нельзя
-App.tsx      →  features/*/index ✅ Можно
+features/*  →  shared/*      ✓ allowed
+features/*  →  features/*    ✗ forbidden (no cross-feature imports)
+shared/*    →  features/*    ✗ forbidden
 ```
 
-## Ключевые соглашения
+Features are independent slices. If two features need the same logic, it belongs in `shared/`.
 
-- **Именование компонентов:** PascalCase (`KPICard.tsx`, `RevenueAreaChart.tsx`)
-- **Именование утилит:** camelCase (`mockData.ts`, `dashboardStore.ts`)
-- **Экспорт:** именованный во всех файлах; default только в `App.tsx` и `main.tsx`
-- **Типы:** все в `src/types/index.ts`; компоненты не объявляют собственных интерфейсов данных
-- **Mock-данные:** только в `src/data/mockData.ts`
+---
 
-## Dark Mode
+## Layer Descriptions
 
-```css
-/* index.css */
-@custom-variant dark (&:where(.dark, .dark *));
+### `features/`
+
+Each feature directory owns:
+- Its page component (`*Page.tsx`)
+- Page-specific sub-components (`components/`)
+- No own store or API — reads from `shared/`
+
+Pages are lazy-loaded via `React.lazy` in `App.tsx` for code splitting.
+
+### `shared/api/`
+
+Mock API layer built on TanStack Query. Each file exports `useQuery`-compatible fetcher functions that simulate network delay (`randomDelay 200–400ms`). Replacing mock data with real endpoints means changing only these files.
+
+### `shared/store/`
+
+Single Zustand store (`dashboardStore`) manages:
+- UI state: theme, sidebarOpen, dateRange
+- Derived data: `filteredMetrics` and `summaryStats` — recomputed on every `setDateRange` call
+
+### `shared/components/`
+
+- `layout/` — app shell components (Sidebar, TopBar). Imported only in `App.tsx`.
+- `ui/` — primitive reusable components (KPICard, Modal, Popover). No business logic.
+
+---
+
+## Routing
+
+React Router v6 with `createBrowserRouter`. All routes render inside `AppLayout` (Sidebar + TopBar). Pages are lazy-loaded:
+
+```
+/             → DashboardPage
+/analytics    → AnalyticsPage
+/orders       → OrdersPage
+/customers    → CustomersPage
+/products     → ProductsPage
+/reports      → ReportsPage
+/settings     → SettingsPage
 ```
 
-Класс `dark` ставится на `<html>` через Zustand `toggleTheme()`. Tailwind `dark:` утилиты работают автоматически.
+---
 
 ## See Also
 
-- [State Management](state-management.md) — Zustand store в деталях
-- [Компоненты](components.md) — каталог всех компонентов
+- [Components](components.md) — component API and implementation details
+- [State Management](state-management.md) — store structure and React Query patterns
