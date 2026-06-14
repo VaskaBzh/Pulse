@@ -40,10 +40,9 @@ export function ReportsPage() {
     defaultValues: { reportType: 'Sales', format: 'CSV' },
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const reportType = watch('reportType');
   const format = watch('format');
-
-  console.log('[Reports] query key changed', { reportType });
 
   const periodLabel = PERIOD_LABELS[dateRange] ?? dateRange;
 
@@ -81,7 +80,6 @@ export function ReportsPage() {
   }, [reportType, filteredMetrics, orders, customers, products]);
 
   const onExport = (values: ReportExportValues) => {
-    console.log('[Reports] form submitted', { ...values, dateRange });
     const typeMap: Record<ReportType, string> = {
       Sales: 'metrics',
       Orders: 'orders',
@@ -94,10 +92,6 @@ export function ReportsPage() {
       previewData,
     );
   };
-
-  if (errors.reportType || errors.format) {
-    console.log('[Reports] validation errors', errors);
-  }
 
   return (
     <div className="p-5 space-y-5 min-h-full">

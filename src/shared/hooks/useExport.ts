@@ -18,7 +18,6 @@ export function useExport() {
   }
 
   const exportToCSV = () => {
-    console.log('[Reports] export triggered', { type: 'metrics', format: 'csv', dateRange });
     const headers = [
       'Date',
       'Revenue ($)',
@@ -48,7 +47,6 @@ export function useExport() {
   };
 
   const exportData = (type: ReportType, format: ExportFormat, data: unknown[]) => {
-    console.log('[Reports] export triggered', { type, format, dateRange });
     const filename = `pulse-${type}-${dateRange}-${new Date().toISOString().slice(0, 10)}`;
     if (format === 'json') {
       download(JSON.stringify(data, null, 2), `${filename}.json`, 'application/json');

@@ -29,8 +29,6 @@ export function TopProductsTable() {
     queryFn: fetchProducts,
   });
 
-  console.log('[TopProductsTable] query state', { isLoading, count: products?.length });
-
   const maxRev = products?.[0]?.revenue ?? 1;
 
   return (

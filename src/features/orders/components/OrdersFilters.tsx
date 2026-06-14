@@ -22,11 +22,11 @@ export function OrdersFilters({ onFilterChange }: OrdersFiltersProps) {
     defaultValues: { search: '', status: 'all' },
   });
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const values = watch();
 
   useEffect(() => {
     const id = setTimeout(() => {
-      console.log('[OrdersFilters] form values changed', values);
       onFilterChange(values);
     }, 300);
     return () => clearTimeout(id);

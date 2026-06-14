@@ -44,8 +44,6 @@ export function RecentOrdersTable() {
     queryFn: fetchOrders,
   });
 
-  console.log('[RecentOrdersTable] query state', { isLoading, count: orders?.length });
-
   const rows = orders?.slice(0, 10) ?? [];
 
   return (

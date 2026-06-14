@@ -58,8 +58,6 @@ export function OrdersPage() {
     queryFn: fetchOrders,
   });
 
-  console.log('[Orders] query state', { isLoading, count: allOrders?.length });
-
   const handleFilterChange = useCallback((values: OrdersFilterValues) => {
     setFilters(values);
     setPage(0);
@@ -70,13 +68,11 @@ export function OrdersPage() {
       setSortDir((prev) => (sortColumn === col ? (prev === 'asc' ? 'desc' : 'asc') : 'desc'));
       setSortColumn(col);
       setPage(0);
-      console.log('[Orders] sort changed', { column: col });
     },
     [sortColumn],
   );
 
   const handleRowClick = useCallback((order: Order) => {
-    console.log('[Orders] order detail modal opened', { orderId: order.id });
     setSelectedOrder(order);
   }, []);
 

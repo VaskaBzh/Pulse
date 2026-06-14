@@ -11,14 +11,10 @@ interface ModalProps {
 export function Modal({ isOpen, onClose, title, children }: ModalProps) {
   useEffect(() => {
     if (!isOpen) return;
-    console.log('[Modal] opened:', title);
     document.body.style.overflow = 'hidden';
 
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        console.log('[Modal] closed');
-        onClose();
-      }
+      if (e.key === 'Escape') onClose();
     };
     document.addEventListener('keydown', handleKey);
     return () => {
@@ -37,13 +33,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
       aria-labelledby="modal-title"
     >
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/50 transition-opacity"
-        onClick={() => {
-          console.log('[Modal] closed');
-          onClose();
-        }}
-      />
+      <div className="absolute inset-0 bg-black/50 transition-opacity" onClick={onClose} />
 
       {/* Panel */}
       <div className="relative z-10 w-full max-w-md bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-200/80 dark:border-slate-700/50 transition-all">
@@ -52,10 +42,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
             {title}
           </h2>
           <button
-            onClick={() => {
-              console.log('[Modal] closed');
-              onClose();
-            }}
+            onClick={onClose}
             className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
             aria-label="Close modal"
           >
