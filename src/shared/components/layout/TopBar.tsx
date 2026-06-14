@@ -27,6 +27,7 @@ export function TopBar() {
       <div className="flex items-center gap-3">
         <button
           onClick={toggleSidebar}
+          aria-label="Toggle sidebar"
           className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors lg:hidden"
         >
           <Menu className="w-4 h-4" />
@@ -47,11 +48,16 @@ export function TopBar() {
       </div>
 
       <div className="flex items-center gap-2">
-        <div className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
+        <div
+          role="group"
+          aria-label="Date range"
+          className="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800 rounded-lg p-1"
+        >
           {RANGES.map(({ label, value }) => (
             <button
               key={value}
               onClick={() => setDateRange(value)}
+              aria-pressed={dateRange === value}
               className={clsx(
                 'px-3 py-1 text-xs font-semibold rounded-md transition-all duration-150',
                 dateRange === value
@@ -72,15 +78,18 @@ export function TopBar() {
           <span className="hidden sm:inline">Export CSV</span>
         </button>
 
-        <button className="relative w-9 h-9 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+        <button
+          aria-label="Notifications"
+          className="relative w-9 h-9 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        >
           <Bell className="w-4 h-4" />
           <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-rose-500 rounded-full ring-2 ring-white dark:ring-slate-900" />
         </button>
 
         <button
           onClick={toggleTheme}
+          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
           className="w-9 h-9 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-          title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
         >
           {theme === 'dark' ? (
             <Sun className="w-4 h-4 text-amber-400" />
