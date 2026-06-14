@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { clsx } from 'clsx';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { OrdersFilters } from './components/OrdersFilters';
 import { OrdersTable } from './components/OrdersTable';
 import type { SortColumn, SortDir } from './components/OrdersTable';
@@ -47,6 +47,10 @@ function SkeletonTable() {
 }
 
 export function OrdersPage() {
+  useEffect(() => {
+    document.title = 'Orders — Pulse';
+  }, []);
+
   const [filters, setFilters] = useState<OrdersFilterValues>({ search: '', status: 'all' });
   const [sortColumn, setSortColumn] = useState<SortColumn>('date');
   const [sortDir, setSortDir] = useState<SortDir>('desc');

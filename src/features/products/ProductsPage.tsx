@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { clsx } from 'clsx';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { ProductCard } from './components/ProductCard';
 import { fetchProducts } from '../../shared/api';
 import type { Product } from '../../shared/types';
@@ -14,6 +14,10 @@ const SORT_OPTIONS: { key: SortKey; label: string }[] = [
 ];
 
 export function ProductsPage() {
+  useEffect(() => {
+    document.title = 'Products — Pulse';
+  }, []);
+
   const [sortKey, setSortKey] = useState<SortKey>('revenue');
   const [category, setCategory] = useState<string>('All');
 

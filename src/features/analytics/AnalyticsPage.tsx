@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { FunnelChart } from './components/FunnelChart';
 import { RetentionCurve } from './components/RetentionCurve';
 import { RetentionHeatmap } from './components/RetentionHeatmap';
@@ -9,6 +10,10 @@ function SkeletonBlock({ h = 'h-48' }: { h?: string }) {
 }
 
 export function AnalyticsPage() {
+  useEffect(() => {
+    document.title = 'Analytics — Pulse';
+  }, []);
+
   const { data: funnelData, isLoading: funnelLoading } = useQuery({
     queryKey: ['funnelData'],
     queryFn: fetchFunnelData,
