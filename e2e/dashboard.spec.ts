@@ -35,11 +35,11 @@ test.describe('Dashboard — golden path', () => {
     await expect(page.locator('html')).toHaveClass(/dark/);
 
     await page.evaluate(() => console.log('[e2e:dashboard] step: switch to light mode'));
-    await page.getByTitle('Switch to light mode').click();
+    await page.getByLabel('Switch to light mode').click();
     await expect(page.locator('html')).not.toHaveClass(/dark/);
 
     await page.evaluate(() => console.log('[e2e:dashboard] step: switch back to dark mode'));
-    await page.getByTitle('Switch to dark mode').click();
+    await page.getByLabel('Switch to dark mode').click();
     await expect(page.locator('html')).toHaveClass(/dark/);
   });
 
