@@ -32,6 +32,9 @@ screenshot-check/
 .mcp.json
 AGENTS.md
 
+# Vercel
+.vercel/
+
 # Playwright / тестовые артефакты
 playwright-report/
 test-results/
