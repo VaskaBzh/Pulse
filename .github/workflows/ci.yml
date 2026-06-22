@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      - run: npm install
       - run: npm run lint -w apps/web -- --max-warnings 35
 
   typecheck:
@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      - run: npm install
       - run: npx prisma generate --schema=apps/api/prisma/schema.prisma
       - run: npm run typecheck
 
@@ -48,7 +48,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      - run: npm install
       - run: npm run coverage -w apps/web
       - uses: actions/upload-artifact@v4
         if: always()
@@ -66,7 +66,7 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
+      - run: npm install
       - run: npx playwright install --with-deps chromium
       - run: npm run build -w apps/web
       - run: npm run e2e -w apps/web
