@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import type { DailyMetric } from '../../types';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { type DailyMetric } from '../../types';
+import { useDashboardStore } from '../dashboardStore';
 
 const { mockAllMetrics } = vi.hoisted(() => {
   const mkMetric = (i: number): DailyMetric => ({
@@ -21,8 +22,6 @@ vi.mock('../../data/mockData', () => ({
   allMetrics: mockAllMetrics,
 }));
 
-import { useDashboardStore } from '../dashboardStore';
-
 const makeMetric = (i: number): DailyMetric => ({
   date: `2024-${String(Math.floor(i / 30) + 1).padStart(2, '0')}-${String((i % 30) + 1).padStart(2, '0')}`,
   revenue: (i + 1) * 100,
@@ -38,14 +37,9 @@ const full180 = Array.from({ length: 180 }, (_, i) => makeMetric(i));
 
 describe('dashboardStore', () => {
   beforeEach(() => {
-    console.log('[test:dashboardStore] reset — restoring 180-entry mock');
     mockAllMetrics.splice(0, mockAllMetrics.length, ...full180);
     useDashboardStore.getState().setDateRange('30d');
     useDashboardStore.setState({ theme: 'dark', sidebarOpen: true });
-  });
-
-  afterEach(() => {
-    console.log('[test:dashboardStore] test complete');
   });
 
   // ─── getDays ───────────────────────────────────────────────────────────────

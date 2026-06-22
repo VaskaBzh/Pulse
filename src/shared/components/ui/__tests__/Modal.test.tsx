@@ -5,7 +5,6 @@ import { Modal } from '../Modal';
 const noop = vi.fn();
 
 beforeEach(() => {
-  console.log('[test:Modal] setup');
   document.body.style.overflow = '';
   noop.mockReset();
 });

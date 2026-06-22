@@ -1,6 +1,6 @@
+import { randomDelay } from './utils';
 import { allMetrics, trafficSources } from '../data/mockData';
 import type { DailyMetric, TrafficSource, DateRange } from '../types';
-import { randomDelay } from './utils';
 
 export async function fetchMetrics(dateRange: DateRange): Promise<DailyMetric[]> {
   await randomDelay();

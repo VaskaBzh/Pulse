@@ -1,6 +1,6 @@
+import { randomDelay } from './utils';
 import { topProducts, funnelData, retentionData } from '../data/mockData';
 import type { Product, FunnelStep, RetentionRow } from '../types';
-import { randomDelay } from './utils';
 
 export async function fetchProducts(): Promise<Product[]> {
   await randomDelay();
