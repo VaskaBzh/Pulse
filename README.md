@@ -26,6 +26,7 @@
 - Date range filter: **7D / 30D / 90D** — recalculates all KPIs with period-over-period comparison
 - Dark / light theme toggle (Tailwind v4 class strategy, default dark)
 - Collapsible sidebar (240px → 68px icon mode)
+- Desktop-first layout; mobile gracefully degrades
 - CSV export via `useExport` hook
 
 ---
