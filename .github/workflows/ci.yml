@@ -22,7 +22,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npx eslint src --max-warnings 20
+      - run: npx eslint src --max-warnings 0
 
   typecheck:
     name: Typecheck

@@ -41,6 +41,7 @@ export default defineConfig([
         {
           groups: ['builtin', 'external', 'internal', ['parent', 'sibling', 'index']],
           'newlines-between': 'never',
+          distinctGroup: false,
           alphabetize: { order: 'asc', caseInsensitive: true },
         },
       ],

@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import type { DailyMetric } from '../../types';
+import { type DailyMetric } from '../../types';
+import { useExport } from '../useExport';
 
 const mockMetrics: DailyMetric[] = [
   {
@@ -32,13 +33,9 @@ vi.mock('../../store/dashboardStore', () => ({
   ),
 }));
 
-import { useExport } from '../useExport';
-
 let mockAnchor: { href: string; download: string; click: ReturnType<typeof vi.fn> };
 
 beforeEach(() => {
-  console.log('[test:useExport] setup mocks');
-
   mockAnchor = { href: '', download: '', click: vi.fn() };
   const originalCreateElement = document.createElement.bind(document);
   vi.spyOn(document, 'createElement').mockImplementation((tag) => {
@@ -53,7 +50,6 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  console.log('[test:useExport] restore mocks');
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
 });

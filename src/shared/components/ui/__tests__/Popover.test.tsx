@@ -1,10 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { Popover } from '../Popover';
-
-beforeEach(() => {
-  console.log('[test:Popover] setup');
-});
 
 describe('Popover', () => {
   describe('trigger interaction', () => {
