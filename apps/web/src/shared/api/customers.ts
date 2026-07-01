@@ -1,8 +1,8 @@
-import { customers } from '../data/mockData';
+import { CustomerSchema } from '@pulse/contracts';
+import { z } from 'zod/v4';
 import type { Customer } from '../types';
-import { randomDelay } from './utils';
+import { apiRequest } from './httpClient';
 
 export async function fetchCustomers(): Promise<Customer[]> {
-  await randomDelay();
-  return customers;
+  return apiRequest('/customers', z.array(CustomerSchema));
 }

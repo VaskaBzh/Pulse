@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { DollarSign, ShoppingCart, Users, TrendingUp, CreditCard, Activity } from 'lucide-react';
 import { useEffect } from 'react';
 import { OrdersBarChart } from './components/charts/OrdersBarChart';
@@ -5,26 +6,47 @@ import { RevenueAreaChart } from './components/charts/RevenueAreaChart';
 import { TrafficDonutChart } from './components/charts/TrafficDonutChart';
 import { RecentOrdersTable } from './components/tables/RecentOrdersTable';
 import { TopProductsTable } from './components/tables/TopProductsTable';
+import { fetchMetrics } from '../../shared/api';
 import { KPICard } from '../../shared/components/ui/KPICard';
+import { PageSkeleton } from '../../shared/components/ui/PageSkeleton';
 import { useDashboardStore } from '../../shared/store/dashboardStore';
 
 export function Dashboard() {
   const summaryStats = useDashboardStore((s) => s.summaryStats);
   const filteredMetrics = useDashboardStore((s) => s.filteredMetrics);
+  const setRawMetrics = useDashboardStore((s) => s.setRawMetrics);
 
   useEffect(() => {
     document.title = 'Dashboard — Pulse';
   }, []);
 
+  // Always fetch the full 90-day window regardless of the selected UI period —
+  // summaryStats compares the current period against an equally long previous
+  // period, which requires 2x the longest selectable range (90d) of raw data.
+  // Switching periods in the UI stays instant and client-side (see dashboardStore).
+  const { data: metrics, isLoading } = useQuery({
+    queryKey: ['metrics', '90d'],
+    queryFn: () => {
+      console.debug('[Dashboard] fetching metrics range=90d');
+      return fetchMetrics('90d');
+    },
+    throwOnError: true,
+  });
+
+  useEffect(() => {
+    if (metrics) {
+      console.debug(`[Dashboard] metrics loaded: ${metrics.length} entries`);
+      setRawMetrics(metrics);
+    }
+  }, [metrics, setRawMetrics]);
+
+  if (isLoading) {
+    return <PageSkeleton />;
+  }
+
   const spark = (
     key:
-      | 'revenue'
-      | 'profit'
-      | 'orders'
-      | 'users'
-      | 'sessions'
-      | 'conversionRate'
-      | 'avgOrderValue',
+      'revenue' | 'profit' | 'orders' | 'users' | 'sessions' | 'conversionRate' | 'avgOrderValue',
   ) => filteredMetrics.slice(-14).map((m) => m[key] as number);
 
   const kpis = [

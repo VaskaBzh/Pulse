@@ -1,15 +1,18 @@
 import { NestFactory } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './filters/http-exception.filter';
+import type { EnvConfig } from './config/env.schema';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
   const app = await NestFactory.create(AppModule);
 
-  const port = process.env.PORT ?? 3000;
-  const corsOrigin = process.env.CORS_ORIGIN ?? 'http://localhost:5173';
+  const config = app.get(ConfigService<EnvConfig, true>);
+  const port = config.get('PORT', { infer: true });
+  const corsOrigin = config.get('CORS_ORIGIN', { infer: true });
 
   app.setGlobalPrefix('api');
   app.enableCors({ origin: corsOrigin, credentials: true });

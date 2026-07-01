@@ -20,7 +20,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    "paths": {
+      "@pulse/contracts": ["../../packages/contracts/src"],
+      "@pulse/contracts/*": ["../../packages/contracts/src/*"]
+    }
   },
   "include": ["src"]
 }

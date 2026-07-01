@@ -22,7 +22,7 @@ git checkout develop && git pull
 git checkout -b feature/orders-table
 
 # 2. Commit with conventional commits
-git add src/features/orders/
+git add apps/web/src/features/orders/
 git commit -m "feat(orders): add sortable table with status filter"
 
 # 3. Push and open PR targeting develop
