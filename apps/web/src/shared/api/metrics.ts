@@ -1,14 +1,12 @@
-import { allMetrics, trafficSources } from '../data/mockData';
+import { DailyMetricSchema, TrafficSourceSchema } from '@pulse/contracts';
+import { z } from 'zod/v4';
 import type { DailyMetric, TrafficSource, DateRange } from '../types';
-import { randomDelay } from './utils';
+import { apiRequest } from './httpClient';
 
-export async function fetchMetrics(dateRange: DateRange): Promise<DailyMetric[]> {
-  await randomDelay();
-  const days = dateRange === '7d' ? 7 : dateRange === '30d' ? 30 : 90;
-  return allMetrics.slice(-days);
+export async function fetchMetrics(range: DateRange = '90d'): Promise<DailyMetric[]> {
+  return apiRequest(`/metrics?range=${range}`, z.array(DailyMetricSchema));
 }
 
 export async function fetchTrafficSources(): Promise<TrafficSource[]> {
-  await randomDelay();
-  return trafficSources;
+  return apiRequest('/traffic-sources', z.array(TrafficSourceSchema));
 }

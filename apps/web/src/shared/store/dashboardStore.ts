@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { allMetrics } from '../data/mockData';
 import type { DateRange, DailyMetric, SummaryStats, Theme } from '../types';
 
 function getDays(range: DateRange): number {
@@ -42,10 +41,13 @@ function computeStats(current: DailyMetric[], prev: DailyMetric[]): SummaryStats
   };
 }
 
-function buildState(range: DateRange) {
+// rawMetrics is expected to always hold the full 90-day window (see fetchMetrics('90d')
+// in Dashboard.tsx) so that both the current and the previous period of any selected
+// range can be sliced from it client-side, mirroring the previous mock-data behavior.
+function buildState(range: DateRange, rawMetrics: DailyMetric[]) {
   const days = getDays(range);
-  const current = allMetrics.slice(-days);
-  const prev = allMetrics.slice(-(days * 2), -days);
+  const current = rawMetrics.slice(-days);
+  const prev = rawMetrics.slice(-(days * 2), -days);
   return {
     filteredMetrics: current,
     summaryStats: computeStats(current, prev),
@@ -56,21 +58,24 @@ interface DashboardStore {
   theme: Theme;
   dateRange: DateRange;
   sidebarOpen: boolean;
+  rawMetrics: DailyMetric[];
   filteredMetrics: DailyMetric[];
   summaryStats: SummaryStats;
 
   toggleTheme: () => void;
   setDateRange: (range: DateRange) => void;
+  setRawMetrics: (metrics: DailyMetric[]) => void;
   toggleSidebar: () => void;
 }
 
-const initial30d = buildState('30d');
+const initialState = buildState('30d', []);
 
 export const useDashboardStore = create<DashboardStore>((set, get) => ({
   theme: 'dark',
   dateRange: '30d',
   sidebarOpen: true,
-  ...initial30d,
+  rawMetrics: [],
+  ...initialState,
 
   toggleTheme: () => {
     const next: Theme = get().theme === 'dark' ? 'light' : 'dark';
@@ -78,7 +83,12 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
     set({ theme: next });
   },
 
-  setDateRange: (range) => set({ dateRange: range, ...buildState(range) }),
+  setDateRange: (range) => set({ dateRange: range, ...buildState(range, get().rawMetrics) }),
+
+  setRawMetrics: (metrics) => {
+    console.debug(`[dashboardStore] setRawMetrics: received ${metrics.length} entries`);
+    set({ rawMetrics: metrics, ...buildState(get().dateRange, metrics) });
+  },
 
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
 }));

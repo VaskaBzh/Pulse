@@ -1,26 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import type { DailyMetric } from '../../types';
-
-const { mockAllMetrics } = vi.hoisted(() => {
-  const mkMetric = (i: number): DailyMetric => ({
-    date: `2024-${String(Math.floor(i / 30) + 1).padStart(2, '0')}-${String((i % 30) + 1).padStart(2, '0')}`,
-    revenue: (i + 1) * 100,
-    profit: (i + 1) * 50,
-    orders: i + 1,
-    users: i + 1,
-    sessions: (i + 1) * 2,
-    conversionRate: 2.5,
-    avgOrderValue: 100,
-  });
-  return {
-    mockAllMetrics: Array.from({ length: 180 }, (_, i) => mkMetric(i)) as DailyMetric[],
-  };
-});
-
-vi.mock('../../data/mockData', () => ({
-  allMetrics: mockAllMetrics,
-}));
-
 import { useDashboardStore } from '../dashboardStore';
 
 const makeMetric = (i: number): DailyMetric => ({
@@ -38,14 +17,25 @@ const full180 = Array.from({ length: 180 }, (_, i) => makeMetric(i));
 
 describe('dashboardStore', () => {
   beforeEach(() => {
-    console.log('[test:dashboardStore] reset — restoring 180-entry mock');
-    mockAllMetrics.splice(0, mockAllMetrics.length, ...full180);
+    console.log('[test:dashboardStore] reset — seeding 180-entry fixture via setRawMetrics');
+    useDashboardStore.getState().setRawMetrics(full180);
     useDashboardStore.getState().setDateRange('30d');
     useDashboardStore.setState({ theme: 'dark', sidebarOpen: true });
   });
 
   afterEach(() => {
     console.log('[test:dashboardStore] test complete');
+  });
+
+  // ─── loading state (before first fetch) ────────────────────────────────────
+
+  describe('before setRawMetrics is called', () => {
+    it('starts with empty filteredMetrics and zeroed summaryStats', () => {
+      useDashboardStore.getState().setRawMetrics([]);
+      const { filteredMetrics, summaryStats } = useDashboardStore.getState();
+      expect(filteredMetrics).toEqual([]);
+      expect(summaryStats.revenue).toEqual({ current: 0, prev: 0, change: 0 });
+    });
   });
 
   // ─── getDays ───────────────────────────────────────────────────────────────
@@ -76,11 +66,9 @@ describe('dashboardStore', () => {
 
     it('returns 0 change when prev period is empty (prev sum = 0 edge case)', () => {
       // 7 entries → slice(-14, -7) = [] → prev = 0 → pct returns 0
-      mockAllMetrics.splice(
-        0,
-        mockAllMetrics.length,
-        ...Array.from({ length: 7 }, (_, i) => makeMetric(i)),
-      );
+      useDashboardStore
+        .getState()
+        .setRawMetrics(Array.from({ length: 7 }, (_, i) => makeMetric(i)));
       useDashboardStore.getState().setDateRange('7d');
       const { revenue } = useDashboardStore.getState().summaryStats;
       expect(revenue.prev).toBe(0);
@@ -154,6 +142,18 @@ describe('dashboardStore', () => {
     });
   });
 
+  describe('setRawMetrics', () => {
+    it('stores rawMetrics and recomputes filteredMetrics/summaryStats for the current dateRange', () => {
+      useDashboardStore.getState().setDateRange('7d');
+      const smaller = Array.from({ length: 20 }, (_, i) => makeMetric(i));
+      useDashboardStore.getState().setRawMetrics(smaller);
+
+      const state = useDashboardStore.getState();
+      expect(state.rawMetrics).toEqual(smaller);
+      expect(state.filteredMetrics).toEqual(smaller.slice(-7));
+    });
+  });
+
   describe('toggleTheme', () => {
     it('switches dark → light', () => {
       useDashboardStore.setState({ theme: 'dark' });
@@ -188,10 +188,10 @@ describe('dashboardStore', () => {
       expect(useDashboardStore.getState().filteredMetrics).toHaveLength(7);
     });
 
-    it('contains the last N entries of allMetrics', () => {
+    it('contains the last N entries of rawMetrics', () => {
       useDashboardStore.getState().setDateRange('7d');
       const { filteredMetrics } = useDashboardStore.getState();
-      const expected = mockAllMetrics.slice(-7);
+      const expected = full180.slice(-7);
       expect(filteredMetrics).toEqual(expected);
     });
   });
