@@ -51,6 +51,10 @@ preview: ## Просмотр production-сборки frontend
 
 ##@ Docker
 
+.PHONY: build-images
+build-images: ## Собрать образы postgres + api + web (требует profile full)
+	docker compose --profile full build
+
 .PHONY: up
 up: ## Запустить postgres (docker compose up -d)
 	docker compose up -d postgres

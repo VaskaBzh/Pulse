@@ -111,6 +111,22 @@ npm run dev                        # frontend on http://localhost:5173
 
 Backend env vars live in `apps/api/.env` (see `apps/api/.env.example`); frontend reads `VITE_API_URL` from `apps/web/.env` (see `apps/web/.env.example`).
 
+### Docker
+
+The `api` and `web` services are gated behind the `full` compose profile, so the
+default `docker compose up` / `docker compose build` only touches `postgres`.
+To build or run the containerized `api` + `web`, pass `--profile full`:
+
+```bash
+docker compose up -d postgres          # just the database (default profile)
+docker compose --profile full build    # build postgres + api + web images
+docker compose --profile full up -d    # run the whole stack (web on :5173, api on :3000)
+docker compose --profile full down     # stop everything
+```
+
+> Note: `docker compose build` without `--profile full` prints "No services to build"
+> because `api`/`web` are profile-scoped. Use `make build-images` as a shortcut.
+
 ### All commands
 
 | Command | Description |
@@ -151,7 +167,7 @@ Backend e2e tests (Jest + Supertest) cover every endpoint:
 npm run test:api
 ```
 
-CI runs lint → typecheck → unit tests → e2e on every push and pull request.
+CI runs lint (web) + lint (API) → typecheck → unit tests → e2e, plus API e2e tests against a Postgres service, on every push and pull request.
 
 ---
 
