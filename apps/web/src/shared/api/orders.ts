@@ -1,4 +1,5 @@
 import { OrderSchema, PaginatedResponseSchema } from '@pulse/contracts';
+import { logger } from '../lib/logger';
 import type { Order } from '../types';
 import { apiRequest } from './httpClient';
 
@@ -11,7 +12,7 @@ export async function fetchOrders(): Promise<Order[]> {
   );
 
   if (paginated.meta.total > paginated.meta.limit) {
-    console.warn(
+    logger.warn(
       `[api/orders] meta.total (${paginated.meta.total}) exceeds fetch limit (${paginated.meta.limit}) — some orders are not shown; migrate to server-side pagination`,
     );
   }

@@ -1,6 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import type { DailyMetric } from '../../types';
+import { useExport } from '../useExport';
 
 const mockMetrics: DailyMetric[] = [
   {
@@ -31,8 +32,6 @@ vi.mock('../../store/dashboardStore', () => ({
       selector({ filteredMetrics: mockMetrics, dateRange: '7d' }),
   ),
 }));
-
-import { useExport } from '../useExport';
 
 let mockAnchor: { href: string; download: string; click: ReturnType<typeof vi.fn> };
 

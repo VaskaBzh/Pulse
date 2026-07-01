@@ -9,6 +9,7 @@ import { TopProductsTable } from './components/tables/TopProductsTable';
 import { fetchMetrics } from '../../shared/api';
 import { KPICard } from '../../shared/components/ui/KPICard';
 import { PageSkeleton } from '../../shared/components/ui/PageSkeleton';
+import { logger } from '../../shared/lib/logger';
 import { useDashboardStore } from '../../shared/store/dashboardStore';
 
 export function Dashboard() {
@@ -27,7 +28,7 @@ export function Dashboard() {
   const { data: metrics, isLoading } = useQuery({
     queryKey: ['metrics', '90d'],
     queryFn: () => {
-      console.debug('[Dashboard] fetching metrics range=90d');
+      logger.debug('[Dashboard] fetching metrics range=90d');
       return fetchMetrics('90d');
     },
     throwOnError: true,
@@ -35,7 +36,7 @@ export function Dashboard() {
 
   useEffect(() => {
     if (metrics) {
-      console.debug(`[Dashboard] metrics loaded: ${metrics.length} entries`);
+      logger.debug(`[Dashboard] metrics loaded: ${metrics.length} entries`);
       setRawMetrics(metrics);
     }
   }, [metrics, setRawMetrics]);

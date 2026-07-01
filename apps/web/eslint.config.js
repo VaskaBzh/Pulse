@@ -47,4 +47,16 @@ export default defineConfig([
       'import-x/no-duplicates': 'error',
     },
   },
+  {
+    // Tests (unit + e2e) may use console freely for debugging assertions/output.
+    files: [
+      '**/*.test.{ts,tsx}',
+      '**/*.spec.{ts,tsx}',
+      '**/__tests__/**/*.{ts,tsx}',
+      'e2e/**/*.{ts,tsx}',
+    ],
+    rules: {
+      'no-console': 'off',
+    },
+  },
 ]);

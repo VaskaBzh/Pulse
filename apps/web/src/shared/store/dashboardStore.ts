@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { logger } from '../lib/logger';
 import type { DateRange, DailyMetric, SummaryStats, Theme } from '../types';
 
 function getDays(range: DateRange): number {
@@ -86,7 +87,7 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
   setDateRange: (range) => set({ dateRange: range, ...buildState(range, get().rawMetrics) }),
 
   setRawMetrics: (metrics) => {
-    console.debug(`[dashboardStore] setRawMetrics: received ${metrics.length} entries`);
+    logger.debug(`[dashboardStore] setRawMetrics: received ${metrics.length} entries`);
     set({ rawMetrics: metrics, ...buildState(get().dateRange, metrics) });
   },
 

@@ -1,4 +1,5 @@
 import type { z } from 'zod/v4';
+import { logger } from '../lib/logger';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -22,7 +23,7 @@ export async function apiRequest<T>(
   const url = `${API_BASE_URL}${path}`;
   const method = init?.method ?? 'GET';
 
-  console.debug(`[httpClient] → ${method} ${url}`);
+  logger.debug(`[httpClient] → ${method} ${url}`);
 
   const res = await fetch(url, {
     ...init,
@@ -31,7 +32,7 @@ export async function apiRequest<T>(
 
   if (!res.ok) {
     const body = await res.text();
-    console.error(`[httpClient] ✗ ${res.status} ${url}`, body);
+    logger.error(`[httpClient] ✗ ${res.status} ${url}`, body);
     throw new ApiError(res.status, body);
   }
 
@@ -39,10 +40,10 @@ export async function apiRequest<T>(
   const parsed = schema.safeParse(json);
 
   if (!parsed.success) {
-    console.error(`[httpClient] ✗ schema validation failed for ${url}`, parsed.error.issues);
+    logger.error(`[httpClient] ✗ schema validation failed for ${url}`, parsed.error.issues);
     throw new ApiError(0, parsed.error.issues);
   }
 
-  console.debug(`[httpClient] ← ${res.status} ${url}`);
+  logger.debug(`[httpClient] ← ${res.status} ${url}`);
   return parsed.data;
 }
