@@ -1,0 +1,35 @@
+import { NestFactory } from '@nestjs/core';
+import { Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './filters/http-exception.filter';
+import type { EnvConfig } from './config/env.schema';
+
+async function bootstrap() {
+  const logger = new Logger('Bootstrap');
+  const app = await NestFactory.create(AppModule);
+
+  const config = app.get(ConfigService<EnvConfig, true>);
+  const port = config.get('PORT', { infer: true });
+  const corsOrigin = config.get('CORS_ORIGIN', { infer: true });
+
+  app.setGlobalPrefix('api');
+  app.enableCors({ origin: corsOrigin, credentials: true });
+  app.useGlobalFilters(new GlobalExceptionFilter());
+
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('Pulse API')
+    .setDescription('Analytics dashboard backend API')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api/docs', app, document);
+
+  await app.listen(port);
+  logger.log(`API running on http://localhost:${port}`);
+  logger.log(`Swagger at http://localhost:${port}/api/docs`);
+  logger.log(`CORS origin: ${corsOrigin}`);
+}
+
+bootstrap();

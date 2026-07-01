@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/VaskaBzh/Pulse/actions/workflows/ci.yml/badge.svg)](https://github.com/VaskaBzh/Pulse/actions/workflows/ci.yml)
 
-> SaaS-style analytics dashboard built as a portfolio project demonstrating production-grade React architecture.
+> Fullstack analytics dashboard built as a portfolio project — React 19 frontend backed by a real NestJS + PostgreSQL API, with a shared Zod contract between them.
 
 **[Live Demo](https://pulse-jlm996fak-vasily-s-projects3.vercel.app)**
 
@@ -35,24 +35,40 @@
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | React 19 + TypeScript (strict mode) |
-| Build | Vite 8 |
+| Frontend | React 19 + TypeScript (strict mode), Vite 8 |
 | Styles | Tailwind CSS v4 |
 | Charts | Recharts 3 |
 | State | Zustand 5 |
 | Data fetching | TanStack Query v5 |
 | Forms | React Hook Form v7 + Zod v4 |
 | Routing | React Router v6 |
-| Testing | Vitest 4 + React Testing Library + Playwright |
+| Backend | NestJS v11 + Prisma v6 + PostgreSQL 16 |
+| Shared contracts | Zod schemas (`packages/contracts`) — single source of truth for request/response shapes on both sides |
+| API docs | Swagger, auto-generated (`/api/docs`) |
+| Testing | Vitest 4 + React Testing Library + Playwright (frontend), Jest + Supertest (backend) |
 | Icons | lucide-react |
 | Utilities | clsx, date-fns |
 
 ---
 
+## Architecture
+
+```
+Frontend (apps/web, Vite dev server :5173)
+        │  fetch, validated against packages/contracts
+        ▼
+Backend (apps/api, NestJS :3000/api)
+        │  Prisma ORM
+        ▼
+PostgreSQL (Docker Compose, :5432)
+```
+
+`packages/contracts` holds the Zod schemas both apps import — the frontend validates every response against the same schema the backend uses to validate requests, so the contract can't silently drift.
+
 ## Project Structure
 
 ```
-src/
+apps/web/src/
 ├── features/                   — one directory per page
 │   ├── analytics/
 │   ├── customers/
@@ -62,16 +78,23 @@ src/
 │   ├── reports/
 │   └── settings/
 ├── shared/                     — cross-feature code only
-│   ├── api/                    — React Query fetchers (mock API layer)
+│   ├── api/                    — API layer (httpClient.ts + per-resource fetchers, validated via @pulse/contracts)
 │   ├── components/
 │   │   ├── layout/             — Sidebar, TopBar
 │   │   └── ui/                 — KPICard, Modal, Popover
 │   ├── hooks/                  — useExport
 │   ├── lib/                    — Zod validation schemas
 │   ├── store/                  — dashboardStore (Zustand)
-│   └── types/                  — shared TypeScript interfaces
+│   └── types/                  — shared TypeScript interfaces (re-exported from @pulse/contracts where applicable)
 ├── App.tsx
 └── main.tsx
+
+apps/api/src/                   — one module per domain (controller + service)
+├── metrics/ orders/ products/ customers/ traffic/ analytics/ health/
+├── prisma/                     — PrismaService (global module)
+└── main.tsx                    — bootstrap, Swagger, CORS
+
+packages/contracts/src/         — shared Zod schemas (metrics, orders, products, customers, traffic, funnel, retention, pagination)
 ```
 
 **Rule:** features can import from `shared/`, but never from each other.
@@ -81,21 +104,44 @@ src/
 ## Getting Started
 
 ```bash
-npm install
-npm run dev        # http://localhost:5173
+npm install                        # installs all workspaces (apps/web, apps/api, packages/contracts)
+docker compose up postgres         # starts PostgreSQL on :5432
+npm run dev:api                    # backend on http://localhost:3000/api (Swagger at /api/docs)
+npm run dev                        # frontend on http://localhost:5173
 ```
+
+Backend env vars live in `apps/api/.env` (see `apps/api/.env.example`); frontend reads `VITE_API_URL` from `apps/web/.env` (see `apps/web/.env.example`).
+
+### Docker
+
+The `api` and `web` services are gated behind the `full` compose profile, so the
+default `docker compose up` / `docker compose build` only touches `postgres`.
+To build or run the containerized `api` + `web`, pass `--profile full`:
+
+```bash
+docker compose up -d postgres          # just the database (default profile)
+docker compose --profile full build    # build postgres + api + web images
+docker compose --profile full up -d    # run the whole stack (web on :5173, api on :3000)
+docker compose --profile full down     # stop everything
+```
+
+> Note: `docker compose build` without `--profile full` prints "No services to build"
+> because `api`/`web` are profile-scoped. Use `make build-images` as a shortcut.
 
 ### All commands
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Dev server with HMR |
-| `npm run build` | Production build (`tsc -b && vite build`) |
-| `npm run preview` | Serve production build locally |
-| `npm run lint` | ESLint |
-| `npm run format` | Prettier |
-| `npm test` | Vitest watch mode |
-| `npm run coverage` | Coverage report (threshold: 70%) |
+| `npm run dev` | Frontend dev server with HMR |
+| `npm run dev:api` | Backend dev server (watch mode) |
+| `npm run dev:all` | Both dev servers together |
+| `npm run build` | Frontend production build (`tsc -b && vite build`) |
+| `npm run build:api` | Backend production build |
+| `npm run lint` | ESLint (frontend) |
+| `npm run typecheck` | Typecheck both apps |
+| `npm test` | Frontend unit tests (Vitest) |
+| `npm run test:api` | Backend e2e tests (Jest + Supertest) |
+| `npm run coverage` | Frontend coverage report (threshold: 70%) |
 | `npm run e2e` | Playwright e2e tests (Chromium) |
 | `npm run e2e:ui` | Playwright interactive UI mode |
 | `npm run e2e:report` | Open last HTML report |
@@ -104,7 +150,7 @@ npm run dev        # http://localhost:5173
 
 ## Testing
 
-**97 unit tests** across store, validation schemas, hooks, and UI components:
+**117 unit tests** (frontend) across store, API layer, validation schemas, hooks, and UI components:
 
 ```bash
 npm run coverage
@@ -116,7 +162,13 @@ npm run coverage
 npm run e2e
 ```
 
-CI runs lint → typecheck → unit tests → e2e on every push and pull request.
+Backend e2e tests (Jest + Supertest) cover every endpoint:
+
+```bash
+npm run test:api
+```
+
+CI runs lint (web) + lint (API) → typecheck → unit tests → e2e, plus API e2e tests against a Postgres service, on every push and pull request.
 
 ---
 
@@ -125,7 +177,8 @@ CI runs lint → typecheck → unit tests → e2e on every push and pull request
 | Section | Description |
 |---------|-------------|
 | [Getting Started](docs/getting-started.md) | Prerequisites, all commands, testing guide |
-| [Architecture](docs/architecture.md) | Feature-based structure, dependency rules |
+| [Architecture](docs/architecture.md) | Monorepo layout, feature-based structure, dependency rules |
+| [API Reference](docs/api.md) | Backend endpoints, request/response shapes, shared contracts |
 | [Components](docs/components.md) | KPICard, charts, tables, layout, Modal, Popover |
 | [State Management](docs/state-management.md) | Zustand store, React Query, forms |
 | [Git Workflow](docs/git-workflow.md) | Git flow, conventional commits, CI triggers |

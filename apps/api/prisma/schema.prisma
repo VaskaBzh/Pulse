@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model DailyMetric {
+  id             Int      @id @default(autoincrement())
+  date           DateTime @unique @db.Date
+  revenue        Float
+  profit         Float
+  orders         Int
+  users          Int
+  sessions       Int
+  conversionRate Float
+  avgOrderValue  Float
+
+  @@map("daily_metrics")
+}
+
+model Order {
+  id       String      @id @default(uuid())
+  customer String
+  email    String
+  product  String
+  amount   Float
+  status   OrderStatus
+  date     DateTime    @db.Date
+  country  String
+
+  @@index([status])
+  @@index([date])
+  @@map("orders")
+}
+
+model Product {
+  id       String @id @default(uuid())
+  name     String
+  category String
+  revenue  Float
+  orders   Int
+  growth   Float
+
+  @@map("products")
+}
+
+model Customer {
+  id       String          @id @default(uuid())
+  name     String
+  email    String
+  segment  CustomerSegment
+  ltv      Float
+  joinDate DateTime        @db.Date
+  country  String
+  orders   Int
+
+  @@index([segment])
+  @@map("customers")
+}
+
+model TrafficSource {
+  id    Int    @id @default(autoincrement())
+  name  String
+  value Int
+  color String
+
+  @@map("traffic_sources")
+}
+
+model FunnelStep {
+  id             Int    @id @default(autoincrement())
+  label          String
+  value          Int
+  conversionRate Float
+
+  @@map("funnel_steps")
+}
+
+model RetentionCohort {
+  id     Int    @id @default(autoincrement())
+  cohort String
+  weeks  Int[]
+
+  @@map("retention_cohorts")
+}
+
+enum OrderStatus {
+  COMPLETED
+  PENDING
+  CANCELLED
+  REFUNDED
+}
+
+enum CustomerSegment {
+  ENTERPRISE
+  PRO
+  STARTER
+}
