@@ -1,5 +1,6 @@
+import { useQuery } from '@tanstack/react-query';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import { trafficSources } from '../../../../shared/data/mockData';
+import { fetchTrafficSources } from '../../../../shared/api';
 
 interface TpProps {
   active?: boolean;
@@ -25,6 +26,13 @@ function ChartTooltip({ active, payload }: TpProps) {
 }
 
 export function TrafficDonutChart() {
+  const { data, isLoading } = useQuery({
+    queryKey: ['trafficSources'],
+    queryFn: fetchTrafficSources,
+    throwOnError: true,
+  });
+
+  const trafficSources = data ?? [];
   const total = trafficSources.reduce((a, b) => a + b.value, 0);
 
   return (
@@ -38,53 +46,62 @@ export function TrafficDonutChart() {
         </p>
       </div>
 
-      <div className="relative">
-        <ResponsiveContainer width="100%" height={152}>
-          <PieChart>
-            <Pie
-              data={trafficSources}
-              cx="50%"
-              cy="50%"
-              innerRadius={48}
-              outerRadius={68}
-              paddingAngle={3}
-              dataKey="value"
-              strokeWidth={0}
-            >
-              {trafficSources.map((s) => (
-                <Cell key={s.name} fill={s.color} />
-              ))}
-            </Pie>
-            <Tooltip content={<ChartTooltip />} />
-          </PieChart>
-        </ResponsiveContainer>
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-          <span className="text-xl font-bold text-slate-900 dark:text-slate-100">{total}%</span>
-          <span className="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider">
-            Coverage
-          </span>
-        </div>
-      </div>
-
-      <div className="mt-4 space-y-2.5">
-        {trafficSources.map((s) => (
-          <div key={s.name} className="flex items-center gap-2.5">
-            <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ background: s.color }} />
-            <span className="text-xs text-slate-600 dark:text-slate-300 flex-1 truncate">
-              {s.name}
-            </span>
-            <div className="h-1 w-14 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-              <div
-                className="h-full rounded-full"
-                style={{ width: `${s.value}%`, background: s.color }}
-              />
+      {isLoading ? (
+        <div className="animate-pulse h-[152px] rounded-full w-[152px] mx-auto bg-slate-200 dark:bg-slate-700" />
+      ) : (
+        <>
+          <div className="relative">
+            <ResponsiveContainer width="100%" height={152}>
+              <PieChart>
+                <Pie
+                  data={trafficSources}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={48}
+                  outerRadius={68}
+                  paddingAngle={3}
+                  dataKey="value"
+                  strokeWidth={0}
+                >
+                  {trafficSources.map((s) => (
+                    <Cell key={s.name} fill={s.color} />
+                  ))}
+                </Pie>
+                <Tooltip content={<ChartTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <span className="text-xl font-bold text-slate-900 dark:text-slate-100">{total}%</span>
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                Coverage
+              </span>
             </div>
-            <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 w-7 text-right">
-              {s.value}%
-            </span>
           </div>
-        ))}
-      </div>
+
+          <div className="mt-4 space-y-2.5">
+            {trafficSources.map((s) => (
+              <div key={s.name} className="flex items-center gap-2.5">
+                <span
+                  className="w-2.5 h-2.5 rounded-full shrink-0"
+                  style={{ background: s.color }}
+                />
+                <span className="text-xs text-slate-600 dark:text-slate-300 flex-1 truncate">
+                  {s.name}
+                </span>
+                <div className="h-1 w-14 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${s.value}%`, background: s.color }}
+                  />
+                </div>
+                <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 w-7 text-right">
+                  {s.value}%
+                </span>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }
