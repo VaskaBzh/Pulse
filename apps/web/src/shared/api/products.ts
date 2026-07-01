@@ -1,18 +1,16 @@
-import { topProducts, funnelData, retentionData } from '../data/mockData';
+import { ProductSchema, FunnelStepSchema, RetentionRowSchema } from '@pulse/contracts';
+import { z } from 'zod/v4';
 import type { Product, FunnelStep, RetentionRow } from '../types';
-import { randomDelay } from './utils';
+import { apiRequest } from './httpClient';
 
 export async function fetchProducts(): Promise<Product[]> {
-  await randomDelay();
-  return topProducts;
+  return apiRequest('/products', z.array(ProductSchema));
 }
 
 export async function fetchFunnelData(): Promise<FunnelStep[]> {
-  await randomDelay();
-  return funnelData;
+  return apiRequest('/analytics/funnel', z.array(FunnelStepSchema));
 }
 
 export async function fetchRetentionData(): Promise<RetentionRow[]> {
-  await randomDelay();
-  return retentionData;
+  return apiRequest('/analytics/retention', z.array(RetentionRowSchema));
 }
