@@ -22,7 +22,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run lint -w apps/web -- --max-warnings 35
+      - run: npm run lint -w apps/web -- --max-warnings 0
 
   lint-api:
     name: Lint API
