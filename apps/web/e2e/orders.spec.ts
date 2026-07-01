@@ -1,13 +1,15 @@
 import { test, expect } from '@playwright/test';
+import { mockApi } from './support/apiMocks';
 
 test.describe('Orders — critical scenarios', () => {
   test.beforeEach(async ({ page }) => {
     page.on('console', (msg) => {
       console.log(`[e2e:browser] ${msg.type()}: ${msg.text()}`);
     });
+    await mockApi(page);
     await page.goto('/orders');
     await page.waitForLoadState('networkidle');
-    // Wait for the async fetchOrders to resolve (randomDelay 200-400ms)
+    // Wait for fetchOrders (now stubbed by mockApi) to resolve and render rows
     await expect(page.getByRole('table')).toBeVisible({ timeout: 5000 });
     await page.evaluate(() => console.log('[e2e:orders] table ready'));
   });

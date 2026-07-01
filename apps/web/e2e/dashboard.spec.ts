@@ -1,10 +1,12 @@
 import { test, expect } from '@playwright/test';
+import { mockApi } from './support/apiMocks';
 
 test.describe('Dashboard — golden path', () => {
   test.beforeEach(async ({ page }) => {
     page.on('console', (msg) => {
       console.log(`[e2e:browser] ${msg.type()}: ${msg.text()}`);
     });
+    await mockApi(page);
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     await page.evaluate(() => console.log('[e2e:dashboard] page ready'));
