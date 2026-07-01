@@ -56,7 +56,7 @@ up: ## Запустить postgres (docker compose up -d)
 	docker compose up -d postgres
 
 .PHONY: up-all
-up-all: ## Запустить postgres + api (docker compose --profile full up -d)
+up-all: ## Запустить postgres + api + frontend (docker compose --profile full up -d)
 	docker compose --profile full up -d
 
 .PHONY: down
