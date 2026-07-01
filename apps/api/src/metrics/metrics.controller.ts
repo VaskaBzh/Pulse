@@ -1,6 +1,7 @@
-import { Controller, Get, Query, Logger, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Query, Logger } from '@nestjs/common';
 import { MetricsService } from './metrics.service';
-import { MetricsQuerySchema } from '@pulse/contracts';
+import { MetricsQuerySchema, type MetricsQuery } from '@pulse/contracts';
+import { ZodValidationPipe } from '../common/pipes';
 
 @Controller('metrics')
 export class MetricsController {
@@ -9,16 +10,12 @@ export class MetricsController {
   constructor(private readonly metricsService: MetricsService) {}
 
   @Get()
-  async findAll(@Query('range') range?: string) {
-    const parsed = MetricsQuerySchema.safeParse({ range });
-    if (!parsed.success) {
-      this.logger.warn(`GET /metrics invalid range=${range}`);
-      throw new BadRequestException(parsed.error.issues);
-    }
-
-    const { range: validRange } = parsed.data;
-    const result = await this.metricsService.findByRange(validRange);
-    this.logger.debug(`GET /metrics range=${validRange} → ${result.length} rows`);
+  async findAll(
+    @Query(new ZodValidationPipe(MetricsQuerySchema, 'MetricsQuerySchema')) query: MetricsQuery,
+  ) {
+    const { range } = query;
+    const result = await this.metricsService.findByRange(range);
+    this.logger.debug(`GET /metrics range=${range} → ${result.length} rows`);
     return result;
   }
 }

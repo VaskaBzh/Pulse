@@ -1,6 +1,7 @@
-import { Controller, Get, Query, Logger, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Query, Logger } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { OrdersQuerySchema } from '@pulse/contracts';
+import { OrdersQuerySchema, type OrdersQuery } from '@pulse/contracts';
+import { ZodValidationPipe } from '../common/pipes';
 
 @Controller('orders')
 export class OrdersController {
@@ -10,19 +11,8 @@ export class OrdersController {
 
   @Get()
   async findAll(
-    @Query('status') status?: string,
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-    @Query('sort') sort?: string,
-    @Query('search') search?: string,
+    @Query(new ZodValidationPipe(OrdersQuerySchema, 'OrdersQuerySchema')) query: OrdersQuery,
   ) {
-    const parsed = OrdersQuerySchema.safeParse({ status, page, limit, sort, search });
-    if (!parsed.success) {
-      this.logger.warn(`GET /orders validation failed: ${JSON.stringify(parsed.error.issues)}`);
-      throw new BadRequestException(parsed.error.issues);
-    }
-
-    const query = parsed.data;
     const result = await this.ordersService.findAll(query);
     this.logger.debug(
       `GET /orders status=${query.status ?? 'all'} page=${query.page} → total=${result.meta.total}`,

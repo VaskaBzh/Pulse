@@ -1,14 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Prisma, OrderStatus } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import type { OrdersQuery, PaginatedResponse, Order } from '@pulse/contracts';
-
-const STATUS_MAP: Record<string, OrderStatus> = {
-  completed: OrderStatus.COMPLETED,
-  pending: OrderStatus.PENDING,
-  cancelled: OrderStatus.CANCELLED,
-  refunded: OrderStatus.REFUNDED,
-};
+import { toPrismaOrderStatus, toOrderDto } from './orders.mapper';
 
 const ALLOWED_SORT_FIELDS = new Set([
   'date',
@@ -19,13 +13,6 @@ const ALLOWED_SORT_FIELDS = new Set([
   'status',
   'country',
 ]);
-
-const STATUS_REVERSE = {
-  [OrderStatus.COMPLETED]: 'completed',
-  [OrderStatus.PENDING]: 'pending',
-  [OrderStatus.CANCELLED]: 'cancelled',
-  [OrderStatus.REFUNDED]: 'refunded',
-} as const satisfies Record<OrderStatus, string>;
 
 @Injectable()
 export class OrdersService {
@@ -39,7 +26,7 @@ export class OrdersService {
     const where: Prisma.OrderWhereInput = {};
 
     if (status) {
-      where.status = STATUS_MAP[status];
+      where.status = toPrismaOrderStatus(status);
     }
 
     if (search) {
@@ -70,16 +57,7 @@ export class OrdersService {
     ]);
 
     return {
-      data: items.map((o) => ({
-        id: o.id,
-        customer: o.customer,
-        email: o.email,
-        product: o.product,
-        amount: o.amount,
-        status: STATUS_REVERSE[o.status],
-        date: o.date.toISOString().split('T')[0],
-        country: o.country,
-      })),
+      data: items.map(toOrderDto),
       meta: {
         page,
         limit,
