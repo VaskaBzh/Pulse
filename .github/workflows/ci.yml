@@ -80,7 +80,14 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+        # e2e serves the prod SPA and mocks the API at the network layer
+        # (see e2e/support/apiMocks.ts). The build still needs a defined
+        # VITE_API_URL so httpClient issues fetches for the mocks to intercept;
+        # the value is irrelevant since mocks match by path. Real prod URL is
+        # set in Vercel, not here.
       - run: npm run build -w apps/web
+        env:
+          VITE_API_URL: http://localhost:3000/api
       - run: npm run e2e -w apps/web
         env:
           CI: true
