@@ -37,6 +37,27 @@ dev-api: ## Запустить API dev-сервер (http://localhost:3000)
 dev-all: ## Запустить frontend + API параллельно
 	npm run dev -w apps/web & npm run start:dev -w apps/api
 
+# Порты dev-серверов, которые чистит stop-dev (nest + vite с запасом на фолбэк)
+DEV_PORTS     := 3000 5173 5174 5175
+DEV_PORTS_CSV := 3000,5173,5174,5175
+
+.PHONY: stop-dev
+stop-dev: ## Остановить нативные dev-процессы (vite+nest) на портах 3000/5173-5175
+	@echo "Останавливаю dev-процессы на портах: $(DEV_PORTS)"
+	# Linux/macOS-node — виден через lsof
+	if command -v lsof >/dev/null 2>&1; then
+	  pids=$$(lsof -t $(addprefix -i :,$(DEV_PORTS)) 2>/dev/null || true)
+	  if [ -n "$$pids" ]; then kill $$pids 2>/dev/null || true; echo "  killed (lsof): $$pids"; fi
+	fi
+	# Windows-node из-под WSL — виден только через PowerShell
+	if command -v powershell.exe >/dev/null 2>&1; then
+	  powershell.exe -NoProfile -Command "Get-NetTCPConnection -State Listen -LocalPort $(DEV_PORTS_CSV) -ErrorAction SilentlyContinue | Select-Object -Expand OwningProcess -Unique | ForEach-Object { try { Stop-Process -Id \$$_ -Force -ErrorAction Stop; Write-Host ('  killed (win): ' + \$$_) } catch {} }" 2>/dev/null || true
+	fi
+	@echo "Готово."
+
+.PHONY: stop-all
+stop-all: stop-dev down ## Остановить всё: нативные dev-процессы + docker-контейнеры
+
 .PHONY: build
 build: ## Production-сборка frontend (tsc + vite build → dist/)
 	NODE_ENV=production npm run build -w apps/web
@@ -81,6 +102,10 @@ db-migrate: ## Применить миграции Prisma
 db-seed: ## Заполнить БД seed-данными
 	npm run prisma:seed -w apps/api
 
+.PHONY: db-generate
+db-generate: ## Сгенерировать Prisma Client
+	npm run prisma:generate -w apps/api
+
 .PHONY: db-studio
 db-studio: ## Открыть Prisma Studio
 	npm run prisma:studio -w apps/api
@@ -107,11 +132,33 @@ e2e: ## Запустить e2e-тесты Playwright
 e2e-ui: ## Открыть Playwright UI
 	npm run e2e:ui -w apps/web
 
+.PHONY: coverage
+coverage: ## Покрытие тестами (frontend Vitest + API Jest)
+	npm run coverage -w apps/web
+	npm run test:cov -w apps/api
+
 ##@ Качество кода
 
 .PHONY: lint
 lint: ## Запустить ESLint (frontend)
 	npm run lint -w apps/web
+
+.PHONY: lint-api
+lint-api: ## Запустить ESLint (API)
+	npm run lint -w apps/api
+
+.PHONY: lint-fix
+lint-fix: ## Исправить ESLint-ошибки (frontend + API)
+	npm run lint:fix -w apps/web
+	npm run lint:fix -w apps/api
+
+.PHONY: fmt
+fmt: ## Форматировать код через Prettier
+	npx prettier --write .
+
+.PHONY: fmt-check
+fmt-check: ## Проверить форматирование (Prettier, без записи)
+	npx prettier --check .
 
 .PHONY: typecheck
 typecheck: ## Проверка типов TypeScript (все workspaces)
