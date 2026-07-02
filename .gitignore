@@ -23,7 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-# AI Factory / Claude — не коммитятся в репозиторий
+# AI Factory / Claude
 .claude/
 .ai-factory/
 .ai-factory.json
@@ -35,9 +35,20 @@ AGENTS.md
 # Vercel
 .vercel/
 
-# Playwright / тестовые артефакты
+# Playwright / test artifacts
 playwright-report/
 test-results/
 
 # Vitest coverage
 coverage/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Docker
+pgdata/
+
+# Prisma generated client
+apps/api/node_modules/.prisma

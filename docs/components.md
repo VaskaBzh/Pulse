@@ -1,4 +1,4 @@
-[← Architecture](architecture.md) · [Back to README](../README.md) · [State Management →](state-management.md)
+[← API Reference](api.md) · [Back to README](../README.md) · [State Management →](state-management.md)
 
 # Components
 
@@ -99,7 +99,7 @@ All charts use Recharts `<ResponsiveContainer width="100%" height={N}>`.
 ### TrafficDonutChart
 
 - Type: `PieChart` with `innerRadius` (donut)
-- Data: `trafficSources` from `mockData.ts` (static)
+- Data: `fetchTrafficSources()` via `useQuery(['trafficSources'])` — real backend data, loading skeleton while pending
 - 5 sources: Organic, Direct, Referral, Social, Email
 - Custom legend with color dot markers
 
@@ -109,7 +109,7 @@ All charts use Recharts `<ResponsiveContainer width="100%" height={N}>`.
 
 ### RecentOrdersTable
 
-Last 10 orders from `recentOrders` (mockData).
+Last 10 orders — `fetchOrders()` via `useQuery(['orders'])`, sliced to the first 10 client-side.
 
 **Columns:** ID, Customer, Product, Amount, Status, Date, Country
 
@@ -124,7 +124,7 @@ Last 10 orders from `recentOrders` (mockData).
 
 ### TopProductsTable
 
-Top 6 products by revenue from `topProducts` (mockData).
+Top 6 products by revenue — `fetchProducts()` via `useQuery(['products'])`.
 
 **Columns:** Product, Category, Revenue (progress bar), Orders, Growth (%)
 

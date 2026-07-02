@@ -1,15 +1,18 @@
-[← Getting Started](getting-started.md) · [Back to README](../README.md) · [Components →](components.md)
+[← Getting Started](getting-started.md) · [Back to README](../README.md) · [API Reference →](api.md)
 
 # Architecture
 
-Pattern: **Feature-based modules** (`src/features/` + `src/shared/`).
+Monorepo (npm workspaces): `apps/web` (frontend) + `apps/api` (backend) + `packages/contracts` (shared Zod schemas).
+
+Frontend pattern: **Feature-based modules** (`apps/web/src/features/` + `apps/web/src/shared/`).
+Backend pattern: **one NestJS module per domain** (controller + service).
 
 ---
 
 ## Directory Structure
 
 ```
-src/
+apps/web/src/
 ├── features/                        — one directory per route/page
 │   ├── analytics/
 │   │   ├── components/              — page-specific components
@@ -21,7 +24,7 @@ src/
 │   │   ├── components/
 │   │   │   ├── charts/              — RevenueAreaChart, TrafficDonutChart, OrdersBarChart
 │   │   │   └── tables/              — RecentOrdersTable, TopProductsTable
-│   │   └── DashboardPage.tsx
+│   │   └── Dashboard.tsx
 │   ├── orders/
 │   │   ├── components/              — OrdersTable, OrdersFilters, OrderDetailModal
 │   │   └── OrdersPage.tsx
@@ -35,27 +38,41 @@ src/
 │       ├── components/
 │       └── SettingsPage.tsx
 ├── shared/                          — cross-feature code only
-│   ├── api/                         — React Query fetchers (mock API layer)
+│   ├── api/                         — API layer, validated against @pulse/contracts
+│   │   ├── httpClient.ts            — typed fetch wrapper (ApiError, apiRequest<T>)
 │   │   ├── metrics.ts
 │   │   ├── orders.ts
 │   │   ├── customers.ts
 │   │   └── products.ts
 │   ├── components/
 │   │   ├── layout/                  — Sidebar, TopBar (app shell)
-│   │   └── ui/                      — KPICard, Modal, Popover
-│   ├── data/
-│   │   └── mockData.ts              — deterministic 90-day data generator
+│   │   └── ui/                      — KPICard, Modal, Popover, ErrorBoundary, PageSkeleton
 │   ├── hooks/
 │   │   └── useExport.ts             — CSV/JSON export hook
 │   ├── lib/
 │   │   └── validation.ts            — Zod schemas (dateRange, orderStatus, filters)
 │   ├── store/
-│   │   └── dashboardStore.ts        — Zustand store (theme, dateRange, computed stats)
+│   │   └── dashboardStore.ts        — Zustand store (theme, dateRange, rawMetrics, computed stats)
 │   └── types/
-│       └── index.ts                 — shared TypeScript interfaces
+│       └── index.ts                 — re-exports data types from @pulse/contracts + local UI-only types
 ├── App.tsx                          — router + layout shell
 └── main.tsx                         — entry point, dark class init
+
+apps/api/src/                        — one module per domain
+├── metrics/ orders/ products/ customers/ traffic/ analytics/ health/
+│   └── (each: *.controller.ts, *.service.ts, *.module.ts)
+├── prisma/                          — PrismaService (global module)
+├── filters/                         — GlobalExceptionFilter
+├── app.module.ts
+└── main.ts                          — bootstrap, Swagger (/api/docs), CORS, global prefix "api"
+
+packages/contracts/src/              — Zod schemas shared by both apps (single source of truth)
+├── metrics.ts orders.ts products.ts customers.ts traffic.ts funnel.ts retention.ts
+├── pagination.ts                    — PaginatedResponseSchema<T> factory
+└── index.ts                         — barrel export
 ```
+
+See [API Reference](api.md) for the full endpoint list.
 
 ---
 
@@ -84,7 +101,7 @@ Pages are lazy-loaded via `React.lazy` in `App.tsx` for code splitting.
 
 ### `shared/api/`
 
-Mock API layer built on TanStack Query. Each file exports `useQuery`-compatible fetcher functions that simulate network delay (`randomDelay 200–400ms`). Replacing mock data with real endpoints means changing only these files.
+API layer consumed by TanStack Query. Each file exports fetcher functions that call the backend through `httpClient.ts` (typed `fetch` wrapper) and validate the response against the matching Zod schema from `@pulse/contracts` — an invalid or unexpected response shape throws `ApiError` instead of silently passing through bad data.
 
 ### `shared/store/`
 
@@ -117,5 +134,6 @@ React Router v6 with `createBrowserRouter`. All routes render inside `AppLayout`
 
 ## See Also
 
+- [API Reference](api.md) — backend endpoints and shared contract schemas
 - [Components](components.md) — component API and implementation details
 - [State Management](state-management.md) — store structure and React Query patterns
