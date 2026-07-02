@@ -1,8 +1,6 @@
 import type { z } from 'zod/v4';
 import { logger } from '../lib/logger';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
-
 export class ApiError extends Error {
   readonly status: number;
   readonly body: unknown;
@@ -20,7 +18,14 @@ export async function apiRequest<T>(
   schema: z.ZodType<T>,
   init?: RequestInit,
 ): Promise<T> {
-  const url = `${API_BASE_URL}${path}`;
+  const baseUrl = import.meta.env.VITE_API_URL;
+  if (!baseUrl) {
+    const message = 'VITE_API_URL is not set — configure it in your env (.env / Vercel).';
+    logger.error(`[httpClient] ${message}`);
+    throw new Error(message);
+  }
+
+  const url = `${baseUrl}${path}`;
   const method = init?.method ?? 'GET';
 
   logger.debug(`[httpClient] → ${method} ${url}`);

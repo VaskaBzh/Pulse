@@ -44,4 +44,15 @@ describe('httpClient', () => {
 
     await expect(apiRequest('/things/1', schema)).rejects.toBeInstanceOf(ApiError);
   });
+
+  it('throws a clear error and does not call fetch when VITE_API_URL is not set', async () => {
+    vi.stubEnv('VITE_API_URL', '');
+    const fetchSpy = vi.fn();
+    vi.stubGlobal('fetch', fetchSpy);
+
+    await expect(apiRequest('/things/1', schema)).rejects.toThrow(/VITE_API_URL is not set/);
+    expect(fetchSpy).not.toHaveBeenCalled();
+
+    vi.unstubAllEnvs();
+  });
 });
