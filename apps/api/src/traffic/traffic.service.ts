@@ -9,6 +9,8 @@ export class TrafficService {
 
   async findAll() {
     this.logger.debug('findAll traffic sources');
+    // Naturally bounded reference table (seed: 5 traffic channels) — unbounded
+    // read is intentional and safe; no pagination needed. See plan #5.
     return this.prisma.trafficSource.findMany({
       orderBy: { value: 'desc' },
     });

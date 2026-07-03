@@ -203,10 +203,42 @@ export async function mockApi(page: Page): Promise<void> {
   await page.route(/\/analytics\/retention\b/, (route) => fulfillJson(route, retention));
   await page.route(/\/products\b/, (route) => fulfillJson(route, products));
   await page.route(/\/customers\b/, (route) => fulfillJson(route, customers));
-  await page.route(/\/orders\b/, (route) =>
-    fulfillJson(route, {
-      data: orders,
-      meta: { page: 1, limit: 100, total: orders.length, totalPages: 1 },
-    }),
-  );
+  // Orders are filtered/sorted/paginated server-side, so the stub must honour
+  // the query params (status/search/sort/page/limit) exactly like the real API —
+  // otherwise the UI (which no longer filters locally) shows unfiltered rows.
+  await page.route(/\/orders\b/, (route) => fulfillJson(route, buildOrdersResponse(route)));
+}
+
+type MockOrder = (typeof orders)[number];
+
+function buildOrdersResponse(route: Route): unknown {
+  const params = new URL(route.request().url()).searchParams;
+  const status = params.get('status');
+  const search = params.get('search')?.toLowerCase();
+  const [sortField, sortDir] = (params.get('sort') ?? 'date:desc').split(':');
+  const page = Number(params.get('page') ?? '1');
+  const limit = Number(params.get('limit') ?? '10');
+
+  let result = orders.slice();
+  if (status) result = result.filter((o) => o.status === status);
+  if (search) {
+    result = result.filter(
+      (o) => o.customer.toLowerCase().includes(search) || o.email.toLowerCase().includes(search),
+    );
+  }
+
+  const key = sortField as keyof MockOrder;
+  result.sort((a, b) => {
+    const av = a[key] as string | number;
+    const bv = b[key] as string | number;
+    const cmp = av > bv ? 1 : av < bv ? -1 : 0;
+    return sortDir === 'asc' ? cmp : -cmp;
+  });
+
+  const total = result.length;
+  const start = (page - 1) * limit;
+  return {
+    data: result.slice(start, start + limit),
+    meta: { page, limit, total, totalPages: Math.max(1, Math.ceil(total / limit)) },
+  };
 }

@@ -9,6 +9,8 @@ export class AnalyticsService {
 
   async getFunnel() {
     this.logger.debug('getFunnel');
+    // Naturally bounded aggregate (seed: 4 funnel steps) — unbounded read is
+    // intentional; these rows are a fixed pipeline, not user data. See plan #5.
     return this.prisma.funnelStep.findMany({
       orderBy: { id: 'asc' },
     });
@@ -16,6 +18,8 @@ export class AnalyticsService {
 
   async getRetention() {
     this.logger.debug('getRetention');
+    // Naturally bounded aggregate (seed: 6 cohorts) — unbounded read is
+    // intentional; cohort count grows slowly and stays small. See plan #5.
     return this.prisma.retentionCohort.findMany({
       orderBy: { id: 'asc' },
     });
