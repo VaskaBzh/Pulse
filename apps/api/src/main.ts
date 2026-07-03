@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { cleanupOpenApiDoc } from 'nestjs-zod';
 import { AppModule } from './app.module';
 import { GlobalExceptionFilter } from './filters/http-exception.filter';
 import type { EnvConfig } from './config/env.schema';
@@ -23,7 +24,7 @@ async function bootstrap() {
     .setDescription('Analytics dashboard backend API')
     .setVersion('1.0')
     .build();
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  const document = cleanupOpenApiDoc(SwaggerModule.createDocument(app, swaggerConfig));
   SwaggerModule.setup('api/docs', app, document);
 
   await app.listen(port);

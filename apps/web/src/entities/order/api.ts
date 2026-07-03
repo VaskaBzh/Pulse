@@ -1,6 +1,6 @@
 import { OrderSchema, PaginatedResponseSchema, type PaginatedResponse } from '@pulse/contracts';
 import type { Order } from './model';
-import { apiRequest } from '../../shared/api/httpClient';
+import { typedGet } from '../../shared/api/typedClient';
 
 /**
  * Server-side orders query. The backend owns filtering, sorting and pagination
@@ -22,12 +22,11 @@ export interface FetchOrdersParams {
 export async function fetchOrders(
   params: FetchOrdersParams = {},
 ): Promise<PaginatedResponse<Order>> {
-  const query = new URLSearchParams();
-  query.set('page', String(params.page ?? 1));
-  query.set('limit', String(params.limit ?? 10));
-  if (params.sort) query.set('sort', params.sort);
-  if (params.search) query.set('search', params.search);
-  if (params.status) query.set('status', params.status);
-
-  return apiRequest(`/orders?${query.toString()}`, PaginatedResponseSchema(OrderSchema));
+  return typedGet('/orders', PaginatedResponseSchema(OrderSchema), {
+    page: params.page ?? 1,
+    limit: params.limit ?? 10,
+    sort: params.sort,
+    search: params.search,
+    status: params.status,
+  });
 }

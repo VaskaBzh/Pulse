@@ -50,6 +50,24 @@ jobs:
       - run: npx prisma generate --schema=apps/api/prisma/schema.prisma
       - run: npm run typecheck
 
+  api-drift:
+    name: OpenAPI Drift
+    needs: [lint, lint-api]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+        # generate:openapi boots AppModule in NestJS preview mode (no DB), which
+        # still imports @prisma/client — so the client must be generated first.
+      - run: npx prisma generate --schema=apps/api/prisma/schema.prisma
+        # Regenerates apps/api/openapi.json + apps/web/src/shared/api/generated.ts
+        # and fails if they drift from the committed contract.
+      - run: npm run check:api-drift
+
   test:
     name: Unit Tests
     needs: typecheck

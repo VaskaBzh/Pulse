@@ -44,7 +44,8 @@
 | Routing | React Router v6 |
 | Backend | NestJS v11 + Prisma v6 + PostgreSQL 16 |
 | Shared contracts | Zod schemas (`packages/contracts`) — single source of truth for request/response shapes on both sides |
-| API docs | Swagger, auto-generated (`/api/docs`) |
+| API docs | Swagger, auto-generated (`/api/docs`) via `nestjs-zod` DTOs |
+| Typed client | `openapi-typescript` — generated `apps/web/src/shared/api/generated.ts` from the OpenAPI doc (`make generate-api`) |
 | Testing | Vitest 4 + React Testing Library + Playwright (frontend), Jest + Supertest (backend) |
 | Icons | lucide-react |
 | Utilities | clsx, date-fns |
@@ -64,6 +65,18 @@ PostgreSQL (Docker Compose, :5432)
 ```
 
 `packages/contracts` holds the Zod schemas both apps import — the frontend validates every response against the same schema the backend uses to validate requests, so the contract can't silently drift.
+
+**Единая цепочка типов (auto-generated):**
+
+```
+Zod (@pulse/contracts)
+  → createZodDto (nestjs-zod)        — DTO из тех же схем
+  → OpenAPI (/api/docs-json)         — cleanupOpenApiDoc
+  → openapi-typescript               — generated.ts (типы путей/query/ответов)
+  → typedGet(path, ZodSchema, query) — типобезопасный вызов + Zod рантайм-гард
+```
+
+`make generate-api` детерминированно пересобирает `apps/api/openapi.json` и `apps/web/src/shared/api/generated.ts` **без запущенного бэкенда и без БД** (NestJS preview-режим). `make check-api-drift` — CI-гейт: падает, если сгенерированный контракт разошёлся с закоммиченным. Zod-валидация тела ответа сохраняется как рантайм-гард поверх статических типов.
 
 ## Project Structure
 

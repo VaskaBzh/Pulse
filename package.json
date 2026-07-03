@@ -16,6 +16,8 @@
     "typecheck": "npm run typecheck -w apps/web && npm run typecheck -w apps/api",
     "test": "npm run test:run -w apps/web",
     "test:api": "npm run test:e2e -w apps/api",
+    "generate:api": "npm run generate:openapi -w apps/api && npm run generate:api -w apps/web",
+    "check:api-drift": "npm run generate:api && git diff --exit-code -- apps/api/openapi.json apps/web/src/shared/api/generated.ts",
     "prepare": "husky"
   },
   "devDependencies": {
@@ -36,6 +38,11 @@
     "*.{json,css,md}": [
       "prettier --write"
     ]
+  },
+  "overrides": {
+    "openapi-typescript": {
+      "typescript": ">=5.0.0"
+    }
   },
   "allowScripts": {
     "@prisma/client@6.19.3": true,
