@@ -1,5 +1,5 @@
 import { clsx } from 'clsx';
-import type { RetentionRow } from '../../../shared/types';
+import type { RetentionRow } from '../../../entities/product';
 
 interface RetentionHeatmapProps {
   data: RetentionRow[];

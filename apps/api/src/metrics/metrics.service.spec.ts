@@ -84,13 +84,16 @@ describe('MetricsService.findByRange', () => {
     ['7d', 7],
     ['30d', 30],
     ['90d', 90],
-  ] as const)('returns exactly %s worth of rows when data is in the past', async (range, expected) => {
-    const service = await createService(buildRows(latest, 90));
+  ] as const)(
+    'returns exactly %s worth of rows when data is in the past',
+    async (range, expected) => {
+      const service = await createService(buildRows(latest, 90));
 
-    const result = await service.findByRange(range);
+      const result = await service.findByRange(range);
 
-    expect(result).toHaveLength(expected);
-  });
+      expect(result).toHaveLength(expected);
+    },
+  );
 
   it('caps at the number of available rows for wide ranges', async () => {
     const service = await createService(buildRows(latest, 20));

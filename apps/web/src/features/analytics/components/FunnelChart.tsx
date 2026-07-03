@@ -1,4 +1,4 @@
-import type { FunnelStep } from '../../../shared/types';
+import type { FunnelStep } from '../../../entities/product';
 
 interface FunnelChartProps {
   data: FunnelStep[];

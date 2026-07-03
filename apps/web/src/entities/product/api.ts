@@ -1,7 +1,7 @@
 import { ProductSchema, FunnelStepSchema, RetentionRowSchema } from '@pulse/contracts';
 import { z } from 'zod/v4';
-import type { Product, FunnelStep, RetentionRow } from '../types';
-import { apiRequest } from './httpClient';
+import type { Product, FunnelStep, RetentionRow } from './model';
+import { apiRequest } from '../../shared/api/httpClient';
 
 export async function fetchProducts(): Promise<Product[]> {
   return apiRequest('/products', z.array(ProductSchema));

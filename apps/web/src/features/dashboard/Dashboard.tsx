@@ -6,7 +6,7 @@ import { RevenueAreaChart } from './components/charts/RevenueAreaChart';
 import { TrafficDonutChart } from './components/charts/TrafficDonutChart';
 import { RecentOrdersTable } from './components/tables/RecentOrdersTable';
 import { TopProductsTable } from './components/tables/TopProductsTable';
-import { fetchMetrics } from '../../shared/api';
+import { fetchMetrics } from '../../entities/metric';
 import { KPICard } from '../../shared/components/ui/KPICard';
 import { PageSkeleton } from '../../shared/components/ui/PageSkeleton';
 import { logger } from '../../shared/lib/logger';

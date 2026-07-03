@@ -4,10 +4,10 @@ import { useState, useCallback, useEffect } from 'react';
 import { OrdersFilters } from './components/OrdersFilters';
 import { OrdersTable } from './components/OrdersTable';
 import type { SortColumn, SortDir } from './components/OrdersTable';
-import { fetchOrders } from '../../shared/api';
+import { fetchOrders } from '../../entities/order';
+import type { Order } from '../../entities/order';
 import { Modal } from '../../shared/components/ui/Modal';
 import type { OrdersFilterValues } from '../../shared/lib/validation';
-import type { Order } from '../../shared/types';
 
 const PAGE_SIZE = 10;
 

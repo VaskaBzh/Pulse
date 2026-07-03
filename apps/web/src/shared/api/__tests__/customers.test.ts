@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach, vi } from 'vitest';
-import { fetchCustomers } from '../customers';
+import { fetchCustomers } from '../../../entities/customer/api';
 
 describe('customers api', () => {
   afterEach(() => {

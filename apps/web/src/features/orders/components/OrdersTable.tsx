@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
 import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
-import type { Order } from '../../../shared/types';
+import type { Order } from '../../../entities/order';
 
 export type SortColumn = 'date' | 'amount';
 export type SortDir = 'asc' | 'desc';
