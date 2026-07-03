@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { clsx } from 'clsx';
 import { useState, useMemo, useEffect } from 'react';
 import { ProductCard } from './components/ProductCard';
-import { fetchProducts } from '../../shared/api';
-import type { Product } from '../../shared/types';
+import { fetchProducts } from '../../entities/product';
+import type { Product } from '../../entities/product';
 
 type SortKey = 'revenue' | 'orders' | 'growth';
 

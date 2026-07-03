@@ -7,8 +7,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+import type { RetentionRow } from '../../../entities/product';
 import { useDashboardStore } from '../../../shared/store/dashboardStore';
-import type { RetentionRow } from '../../../shared/types';
 
 interface RetentionCurveProps {
   data: RetentionRow[];

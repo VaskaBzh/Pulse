@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach, vi } from 'vitest';
-import { fetchProducts, fetchFunnelData, fetchRetentionData } from '../products';
+import { fetchProducts, fetchFunnelData, fetchRetentionData } from '../../../entities/product/api';
 
 function mockJsonResponse(json: unknown) {
   vi.stubGlobal(

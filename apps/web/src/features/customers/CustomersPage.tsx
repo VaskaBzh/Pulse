@@ -3,9 +3,9 @@ import { clsx } from 'clsx';
 import { Users, DollarSign, UserPlus } from 'lucide-react';
 import { useState, useMemo, useEffect } from 'react';
 import { CustomersTable } from './components/CustomersTable';
-import { fetchCustomers } from '../../shared/api';
+import { fetchCustomers } from '../../entities/customer';
+import type { Customer } from '../../entities/customer';
 import { useDashboardStore } from '../../shared/store/dashboardStore';
-import type { Customer } from '../../shared/types';
 
 type SegmentFilter = 'All' | Customer['segment'];
 

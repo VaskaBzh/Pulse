@@ -1,10 +1,6 @@
-import {
-  OrderSchema,
-  PaginatedResponseSchema,
-  type Order,
-  type PaginatedResponse,
-} from '@pulse/contracts';
-import { typedGet } from './typedClient';
+import { OrderSchema, PaginatedResponseSchema, type PaginatedResponse } from '@pulse/contracts';
+import type { Order } from './model';
+import { typedGet } from '../../shared/api/typedClient';
 
 /**
  * Server-side orders query. The backend owns filtering, sorting and pagination

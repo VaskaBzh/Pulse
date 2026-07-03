@@ -1,5 +1,6 @@
 import { describe, it, expect, afterEach, vi } from 'vitest';
-import { fetchMetrics, fetchTrafficSources } from '../metrics';
+import { fetchMetrics } from '../../../entities/metric/api';
+import { fetchTrafficSources } from '../../../entities/traffic-source/api';
 
 function mockJsonResponse(json: unknown) {
   vi.stubGlobal(

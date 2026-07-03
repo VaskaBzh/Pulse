@@ -90,15 +90,21 @@ apps/web/src/
 │   ├── products/
 │   ├── reports/
 │   └── settings/
+├── entities/                   — domain layer: per-entity api (fetchers) + model (types)
+│   ├── metric/
+│   ├── order/
+│   ├── product/
+│   ├── customer/
+│   └── traffic-source/         — each: api.ts, model.ts, index.ts
 ├── shared/                     — cross-feature code only
-│   ├── api/                    — API layer (httpClient.ts + per-resource fetchers, validated via @pulse/contracts)
+│   ├── api/                    — transport (httpClient.ts) + backward-compat re-exports of entity fetchers
 │   ├── components/
 │   │   ├── layout/             — Sidebar, TopBar
 │   │   └── ui/                 — KPICard, Modal, Popover
 │   ├── hooks/                  — useExport
 │   ├── lib/                    — Zod validation schemas
 │   ├── store/                  — dashboardStore (Zustand)
-│   └── types/                  — shared TypeScript interfaces (re-exported from @pulse/contracts where applicable)
+│   └── types/                  — cross-cutting UI types (SummaryStats, Theme) + re-exports of entity models
 ├── App.tsx
 └── main.tsx
 
@@ -110,7 +116,9 @@ apps/api/src/                   — one module per domain (controller + service)
 packages/contracts/src/         — shared Zod schemas (metrics, orders, products, customers, traffic, funnel, retention, pagination)
 ```
 
-**Rule:** features can import from `shared/`, but never from each other.
+**Architecture follows FSD principles** (`shared` → `entities` → `features` → pages): domain fetchers and types live in `entities/*`, features import them from there, and `shared/` keeps re-exports for backward compatibility.
+
+**Rule:** features can import from `shared/` and `entities/`, but never from each other.
 
 ---
 

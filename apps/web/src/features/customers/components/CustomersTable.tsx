@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
 import { SegmentBadge } from './SegmentBadge';
-import type { Customer } from '../../../shared/types';
+import type { Customer } from '../../../entities/customer';
 
 interface CustomersTableProps {
   customers: Customer[];

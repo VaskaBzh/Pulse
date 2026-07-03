@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { FunnelChart } from './components/FunnelChart';
 import { RetentionCurve } from './components/RetentionCurve';
 import { RetentionHeatmap } from './components/RetentionHeatmap';
-import { fetchFunnelData, fetchRetentionData } from '../../shared/api';
+import { fetchFunnelData, fetchRetentionData } from '../../entities/product';
 
 function SkeletonBlock({ h = 'h-48' }: { h?: string }) {
   return <div className={`animate-pulse ${h} bg-slate-200 dark:bg-slate-700 rounded-xl`} />;
