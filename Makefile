@@ -114,6 +114,20 @@ db-studio: ## Открыть Prisma Studio
 db-reset: ## Сбросить БД и заново мигрировать + seed
 	cd apps/api && npx prisma migrate reset --force
 
+##@ OpenAPI / типизированный клиент
+
+.PHONY: generate-openapi
+generate-openapi: ## Сгенерировать apps/api/openapi.json (offline, preview-режим, без БД)
+	npm run generate:openapi -w apps/api
+
+.PHONY: generate-api
+generate-api: ## Полный пайплайн: openapi.json → типизированный клиент web (generated.ts)
+	npm run generate:api
+
+.PHONY: check-api-drift
+check-api-drift: ## Проверить, что openapi.json/generated.ts не разошлись с контрактом (CI-гейт)
+	npm run check:api-drift
+
 ##@ Тестирование
 
 .PHONY: test
