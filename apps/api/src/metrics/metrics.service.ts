@@ -9,17 +9,36 @@ export class MetricsService {
 
   async findByRange(range: '7d' | '30d' | '90d') {
     const days = range === '7d' ? 7 : range === '30d' ? 30 : 90;
-    const since = new Date();
-    // `date` is stored as `@db.Date` (no time component), so Postgres compares
-    // against the calendar day of `since` — leaving a time-of-day on `since`
-    // makes the boundary day inclusive, returning `days + 1` rows instead of `days`.
+
+    // Anchor the window to the latest available data point, NOT `new Date()`.
+    // The dataset is fixed in the past (seed), so anchoring to the wall clock
+    // makes `Nd` return fewer than N rows once "today" drifts past the last
+    // seeded day (finding A: "asked for 90, got 89"). Anchoring to MAX(date)
+    // keeps `Nd` == N regardless of when the seed ran vs. when we query.
+    const latest = await this.prisma.dailyMetric.findFirst({
+      orderBy: { date: 'desc' },
+      select: { date: true },
+    });
+
+    if (!latest) {
+      this.logger.debug(`findByRange range=${range} days=${days} → no data`);
+      return [];
+    }
+
+    const anchor = latest.date;
+    // `date` is stored as `@db.Date` (no time component); `anchor` is already at
+    // UTC midnight. Go back `days - 1` whole days so the inclusive window spans
+    // exactly `days` calendar days ending at the last available date.
+    const since = new Date(anchor);
     since.setUTCHours(0, 0, 0, 0);
     since.setUTCDate(since.getUTCDate() - (days - 1));
 
-    this.logger.debug(`findByRange range=${range} days=${days} since=${since.toISOString()}`);
+    this.logger.debug(
+      `findByRange range=${range} days=${days} anchor=${anchor.toISOString()} since=${since.toISOString()}`,
+    );
 
     const metrics = await this.prisma.dailyMetric.findMany({
-      where: { date: { gte: since } },
+      where: { date: { gte: since, lte: anchor } },
       orderBy: { date: 'asc' },
     });
 
