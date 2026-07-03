@@ -1,15 +1,15 @@
 import { OrderSchema, PaginatedResponseSchema } from '@pulse/contracts';
 import { logger } from '../lib/logger';
 import type { Order } from '../types';
-import { apiRequest } from './httpClient';
+import { typedGet } from './typedClient';
 
 const FETCH_LIMIT = 100;
 
 export async function fetchOrders(): Promise<Order[]> {
-  const paginated = await apiRequest(
-    `/orders?limit=${FETCH_LIMIT}&page=1`,
-    PaginatedResponseSchema(OrderSchema),
-  );
+  const paginated = await typedGet('/orders', PaginatedResponseSchema(OrderSchema), {
+    limit: FETCH_LIMIT,
+    page: 1,
+  });
 
   if (paginated.meta.total > paginated.meta.limit) {
     logger.warn(
