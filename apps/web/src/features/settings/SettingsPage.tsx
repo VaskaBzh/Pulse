@@ -1,8 +1,8 @@
 import { clsx } from 'clsx';
 import { Moon, Sun, Clock } from 'lucide-react';
 import { useEffect } from 'react';
+import type { DateRange } from '../../entities/metric';
 import { useDashboardStore } from '../../shared/store/dashboardStore';
-import type { DateRange } from '../../shared/types';
 
 const PERIODS: { value: DateRange; label: string }[] = [
   { value: '7d', label: 'Last 7 days' },

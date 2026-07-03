@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { clsx } from 'clsx';
 import { TrendingUp, TrendingDown } from 'lucide-react';
-import { fetchProducts } from '../../../../shared/api';
+import { fetchProducts } from '../../../../entities/product';
 
 const CATEGORY_COLORS: Record<string, string> = {
   Subscription: 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/25',

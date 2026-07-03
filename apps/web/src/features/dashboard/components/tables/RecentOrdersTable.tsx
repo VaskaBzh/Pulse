@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { clsx } from 'clsx';
-import { fetchOrders } from '../../../../shared/api';
-import type { Order } from '../../../../shared/types';
+import { fetchOrders } from '../../../../entities/order';
+import type { Order } from '../../../../entities/order';
 
 const STATUS: Record<Order['status'], { label: string; dot: string; bg: string }> = {
   completed: {

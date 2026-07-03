@@ -1,5 +1,5 @@
 import { clsx } from 'clsx';
-import type { Customer } from '../../../shared/types';
+import type { Customer } from '../../../entities/customer';
 
 const SEGMENT_STYLES: Record<Customer['segment'], string> = {
   Enterprise: 'text-violet-700 dark:text-violet-400 bg-violet-50 dark:bg-violet-900/25',

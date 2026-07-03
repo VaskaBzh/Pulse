@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import { fetchTrafficSources } from '../../../../shared/api';
+import { fetchTrafficSources } from '../../../../entities/traffic-source';
 
 interface TpProps {
   active?: boolean;

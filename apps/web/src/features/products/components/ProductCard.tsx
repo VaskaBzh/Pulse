@@ -1,7 +1,7 @@
 import { clsx } from 'clsx';
 import { TrendingUp, TrendingDown, Info } from 'lucide-react';
+import type { Product } from '../../../entities/product';
 import { Popover } from '../../../shared/components/ui/Popover';
-import type { Product } from '../../../shared/types';
 
 interface ProductCardProps {
   product: Product;
