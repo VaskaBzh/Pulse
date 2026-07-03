@@ -1,21 +1,33 @@
-import { OrderSchema, PaginatedResponseSchema } from '@pulse/contracts';
+import { OrderSchema, PaginatedResponseSchema, type PaginatedResponse } from '@pulse/contracts';
 import type { Order } from './model';
 import { apiRequest } from '../../shared/api/httpClient';
-import { logger } from '../../shared/lib/logger';
 
-const FETCH_LIMIT = 100;
+/**
+ * Server-side orders query. The backend owns filtering, sorting and pagination
+ * (`OrdersService.findAll`) and returns `meta.total/totalPages`, so the client
+ * must NOT over-fetch and slice locally — that silently dropped rows past the
+ * fetch limit and made UI counters diverge from the DB (audit finding B).
+ */
+export interface FetchOrdersParams {
+  /** 1-based page index (matches the backend contract). */
+  page?: number;
+  limit?: number;
+  /** `field:dir`, e.g. `date:desc`. Server whitelists the field. */
+  sort?: string;
+  search?: string;
+  /** Omit for "all" — the backend treats an absent status as no filter. */
+  status?: Order['status'];
+}
 
-export async function fetchOrders(): Promise<Order[]> {
-  const paginated = await apiRequest(
-    `/orders?limit=${FETCH_LIMIT}&page=1`,
-    PaginatedResponseSchema(OrderSchema),
-  );
+export async function fetchOrders(
+  params: FetchOrdersParams = {},
+): Promise<PaginatedResponse<Order>> {
+  const query = new URLSearchParams();
+  query.set('page', String(params.page ?? 1));
+  query.set('limit', String(params.limit ?? 10));
+  if (params.sort) query.set('sort', params.sort);
+  if (params.search) query.set('search', params.search);
+  if (params.status) query.set('status', params.status);
 
-  if (paginated.meta.total > paginated.meta.limit) {
-    logger.warn(
-      `[api/orders] meta.total (${paginated.meta.total}) exceeds fetch limit (${paginated.meta.limit}) — some orders are not shown; migrate to server-side pagination`,
-    );
-  }
-
-  return paginated.data;
+  return apiRequest(`/orders?${query.toString()}`, PaginatedResponseSchema(OrderSchema));
 }

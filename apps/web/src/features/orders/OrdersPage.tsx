@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { clsx } from 'clsx';
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { OrdersFilters } from './components/OrdersFilters';
 import { OrdersTable } from './components/OrdersTable';
 import type { SortColumn, SortDir } from './components/OrdersTable';
@@ -57,10 +57,24 @@ export function OrdersPage() {
   const [page, setPage] = useState(0);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
-  const { data: allOrders, isLoading } = useQuery({
-    queryKey: ['orders'],
-    queryFn: fetchOrders,
+  // Filtering, sorting and pagination all run on the server (backend owns them
+  // and returns `meta.total`). The query key carries every server param so the
+  // cache stays correct; `keepPreviousData` avoids a table flash while paging.
+  const { data, isLoading, isPlaceholderData } = useQuery({
+    queryKey: ['orders', filters.status, filters.search, sortColumn, sortDir, page],
+    queryFn: () =>
+      fetchOrders({
+        page: page + 1, // table state is 0-based; the API contract is 1-based
+        limit: PAGE_SIZE,
+        sort: `${sortColumn}:${sortDir}`,
+        search: filters.search || undefined,
+        status: filters.status === 'all' ? undefined : filters.status,
+      }),
+    placeholderData: keepPreviousData,
   });
+
+  const orders = data?.data ?? [];
+  const total = data?.meta.total ?? 0; // real DB total, not a client-filtered length
 
   const handleFilterChange = useCallback((values: OrdersFilterValues) => {
     setFilters(values);
@@ -80,25 +94,6 @@ export function OrdersPage() {
     setSelectedOrder(order);
   }, []);
 
-  const filtered = useMemo(() => {
-    let data = allOrders ?? [];
-    if (filters.status !== 'all') data = data.filter((o) => o.status === filters.status);
-    if (filters.search) {
-      const q = filters.search.toLowerCase();
-      data = data.filter(
-        (o) => o.customer.toLowerCase().includes(q) || o.email.toLowerCase().includes(q),
-      );
-    }
-    data = [...data].sort((a, b) => {
-      const dir = sortDir === 'asc' ? 1 : -1;
-      if (sortColumn === 'amount') return (a.amount - b.amount) * dir;
-      return a.date.localeCompare(b.date) * dir;
-    });
-    return data;
-  }, [allOrders, filters, sortColumn, sortDir]);
-
-  const paged = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
-
   return (
     <div className="p-5 space-y-4 min-h-full">
       <div>
@@ -113,17 +108,19 @@ export function OrdersPage() {
       {isLoading ? (
         <SkeletonTable />
       ) : (
-        <OrdersTable
-          orders={paged}
-          sortColumn={sortColumn}
-          sortDir={sortDir}
-          onSort={handleSort}
-          page={page}
-          pageSize={PAGE_SIZE}
-          total={filtered.length}
-          onPageChange={setPage}
-          onRowClick={handleRowClick}
-        />
+        <div className={clsx('transition-opacity', isPlaceholderData && 'opacity-60')}>
+          <OrdersTable
+            orders={orders}
+            sortColumn={sortColumn}
+            sortDir={sortDir}
+            onSort={handleSort}
+            page={page}
+            pageSize={PAGE_SIZE}
+            total={total}
+            onPageChange={setPage}
+            onRowClick={handleRowClick}
+          />
+        </div>
       )}
 
       {selectedOrder && (

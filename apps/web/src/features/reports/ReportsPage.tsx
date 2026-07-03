@@ -32,7 +32,14 @@ export function ReportsPage() {
   const { filteredMetrics, dateRange } = useDashboardStore();
   const { exportData } = useExport();
 
-  const { data: orders } = useQuery({ queryKey: ['orders'], queryFn: fetchOrders });
+  // Reports export the full orders set. The backend caps `limit` at 100, so the
+  // export currently covers the first 100 orders (ample for the seed of 28);
+  // a dedicated bulk/streaming export endpoint would be needed beyond that.
+  const { data: ordersResponse } = useQuery({
+    queryKey: ['orders', 'report'],
+    queryFn: () => fetchOrders({ limit: 100, sort: 'date:desc' }),
+  });
+  const orders = ordersResponse?.data;
   const { data: customers } = useQuery({ queryKey: ['customers'], queryFn: fetchCustomers });
   const { data: products } = useQuery({ queryKey: ['products'], queryFn: fetchProducts });
 
