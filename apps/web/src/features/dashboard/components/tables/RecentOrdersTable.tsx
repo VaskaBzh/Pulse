@@ -39,12 +39,13 @@ function SkeletonRow() {
 }
 
 export function RecentOrdersTable() {
-  const { data: orders, isLoading } = useQuery({
-    queryKey: ['orders'],
-    queryFn: fetchOrders,
+  // Latest 10 straight from the server — no over-fetch, no client-side slice.
+  const { data, isLoading } = useQuery({
+    queryKey: ['orders', 'recent'],
+    queryFn: () => fetchOrders({ limit: 10, sort: 'date:desc' }),
   });
 
-  const rows = orders?.slice(0, 10) ?? [];
+  const rows = data?.data ?? [];
 
   return (
     <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700/50 overflow-hidden">
