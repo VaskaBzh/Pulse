@@ -1,12 +1,10 @@
-export type {
-  DailyMetric,
-  Order,
-  Product,
-  Customer,
-  TrafficSource,
-  FunnelStep,
-  RetentionRow,
-} from '@pulse/contracts';
+// Domain types now live in entities/*/model.ts (FSD entities layer).
+// Re-exported here for backward compatibility — prefer importing from entities/*.
+export type { DailyMetric, DateRange } from '../../entities/metric';
+export type { TrafficSource } from '../../entities/traffic-source';
+export type { Order } from '../../entities/order';
+export type { Product, FunnelStep, RetentionRow } from '../../entities/product';
+export type { Customer } from '../../entities/customer';
 
 export interface SummaryStats {
   revenue: { current: number; prev: number; change: number };
@@ -17,5 +15,4 @@ export interface SummaryStats {
   sessions: { current: number; prev: number; change: number };
 }
 
-export type DateRange = '7d' | '30d' | '90d';
 export type Theme = 'light' | 'dark';

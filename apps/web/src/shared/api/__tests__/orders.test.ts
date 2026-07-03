@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach, vi } from 'vitest';
-import { fetchOrders } from '../orders';
+import { fetchOrders } from '../../../entities/order/api';
 
 const order = {
   id: '1',
